@@ -36,9 +36,25 @@ function placeholderSubtitle(): string {
 }
 
 let lastPollinationsError: string | null = null;
+/** After a 402/401, skip slow Pollinations calls for the rest of this session. */
+let pollinationsExhausted = false;
 
 export function getLastPollinationsError(): string | null {
   return lastPollinationsError;
+}
+
+export function isPollinationsExhausted(): boolean {
+  return pollinationsExhausted;
+}
+
+function isNonRetryablePollinationsError(message: string): boolean {
+  return (
+    message.includes('402') ||
+    message.includes('401') ||
+    message.includes('403') ||
+    message.includes('PAYMENT_REQUIRED') ||
+    message.includes('UNAUTHORIZED')
+  );
 }
 
 /** Local SVG placeholder — always loads, works in preview and PDF export. */
@@ -140,7 +156,7 @@ class RequestQueue {
   }
 }
 
-const imageQueue = new RequestQueue(2);
+const imageQueue = new RequestQueue(5);
 const resolvedCache = new Map<string, string>();
 const blobUrls = new Set<string>();
 
@@ -186,6 +202,9 @@ async function fetchPollinationsBlob(prompt: string, seed: number): Promise<Blob
   if (!response.ok) {
     const body = await response.text();
     lastPollinationsError = `${response.status}: ${body.slice(0, 200)}`;
+    if (isNonRetryablePollinationsError(lastPollinationsError)) {
+      pollinationsExhausted = true;
+    }
     throw new Error(lastPollinationsError);
   }
 
@@ -214,8 +233,8 @@ export async function resolveImageUrl(prompt: string, seed = 0): Promise<string>
     const again = resolvedCache.get(key);
     if (again) return again;
 
-    if (hasPollinationsApiKey()) {
-      for (let attempt = 0; attempt < 3; attempt++) {
+    if (hasPollinationsApiKey() && !pollinationsExhausted) {
+      for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const blob = await fetchPollinationsBlob(prompt, seed + attempt);
           const blobUrl = URL.createObjectURL(blob);
@@ -223,8 +242,10 @@ export async function resolveImageUrl(prompt: string, seed = 0): Promise<string>
           resolvedCache.set(key, blobUrl);
           return blobUrl;
         } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
           console.warn(`Pollinations attempt ${attempt + 1} failed:`, err);
-          if (attempt < 2) await delay(1200 * (attempt + 1));
+          if (isNonRetryablePollinationsError(msg)) break;
+          if (attempt < 1) await delay(800);
         }
       }
     }

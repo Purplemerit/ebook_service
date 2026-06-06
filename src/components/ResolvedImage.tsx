@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
-import { getPlaceholderImageUrl, resolveImageUrl } from '../utils/imageHelper';
+import { getPlaceholderImageUrl, getStockFallbackUrl, resolveImageUrl } from '../utils/imageHelper';
 
 interface ResolvedImageProps {
   prompt: string;
@@ -20,9 +20,14 @@ export const ResolvedImage: React.FC<ResolvedImageProps> = ({
   eager = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [src, setSrc] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const instantSrc = useMemo(() => getStockFallbackUrl(prompt, seed), [prompt, seed]);
+  const [src, setSrc] = useState(instantSrc);
+  const [upgrading, setUpgrading] = useState(false);
   const [visible, setVisible] = useState(eager);
+
+  useEffect(() => {
+    setSrc(instantSrc);
+  }, [instantSrc]);
 
   useEffect(() => {
     if (eager) return;
@@ -36,7 +41,7 @@ export const ResolvedImage: React.FC<ResolvedImageProps> = ({
           observer.disconnect();
         }
       },
-      { rootMargin: '240px' }
+      { rootMargin: eager ? '0px' : '120px' }
     );
 
     observer.observe(node);
@@ -47,19 +52,17 @@ export const ResolvedImage: React.FC<ResolvedImageProps> = ({
     if (!visible) return;
 
     let cancelled = false;
-    setLoading(true);
+    setUpgrading(true);
 
     resolveImageUrl(prompt, seed)
       .then((url) => {
-        if (!cancelled) {
-          setSrc(url);
-        }
+        if (!cancelled && url) setSrc(url);
       })
       .catch(() => {
-        if (!cancelled) {
-          setSrc(getPlaceholderImageUrl(alt, seed));
-          setLoading(false);
-        }
+        if (!cancelled) setSrc(getPlaceholderImageUrl(alt, seed));
+      })
+      .finally(() => {
+        if (!cancelled) setUpgrading(false);
       });
 
     return () => {
@@ -69,23 +72,17 @@ export const ResolvedImage: React.FC<ResolvedImageProps> = ({
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
-      {loading && (
-        <div className="absolute inset-0 bg-black/15 flex items-center justify-center z-10">
-          <RefreshCw size={16} className="animate-spin text-white/90" />
+      {upgrading && (
+        <div className="absolute top-1 right-1 z-10 bg-black/40 rounded-full p-0.5">
+          <RefreshCw size={10} className="animate-spin text-white/90" />
         </div>
       )}
-      {src && (
-        <img
-          src={src}
-          alt={alt}
-          style={style}
-          onLoad={() => setLoading(false)}
-          onError={() => {
-            setLoading(false);
-            setSrc(getPlaceholderImageUrl(alt, seed));
-          }}
-        />
-      )}
+      <img
+        src={src}
+        alt={alt}
+        style={style}
+        onError={() => setSrc(getPlaceholderImageUrl(alt, seed))}
+      />
     </div>
   );
 };
