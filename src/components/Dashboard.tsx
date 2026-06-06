@@ -400,7 +400,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               <div className="celestial-studio-panel space-y-3">
                 <p className="celestial-studio-sub leading-normal">
-                  Download all formatted pages compiled into a single PDF document.
+                  Download your book as a PDF in under a minute — all pages with chapter text included.
                 </p>
                 <button
                   type="button"
@@ -420,7 +420,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   ) : (
                     <>
                       <Sparkles size={14} />
-                      <span>Download E-Book (Full PDF)</span>
+                      <span>Download PDF</span>
                     </>
                   )}
                 </button>

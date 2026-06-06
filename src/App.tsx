@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 import { Dashboard } from './components/Dashboard';
 import { EbookViewer } from './components/EbookViewer';
 import { parsePdf } from './utils/pdfParser';
@@ -17,13 +16,10 @@ import {
 } from './utils/imageHelper';
 import type { GroqConfig } from './utils/groqHelper';
 import { Compass, Sparkles } from 'lucide-react';
-import { PageLayout } from './components/PageLayout';
 import { LandingPage } from './components/LandingPage';
 import type { ThemeId } from './themes/types';
-import {
-  prepareElementForPdfCapture,
-  exportEbookPageByPage,
-} from './utils/pdfExport';
+import { ExportProgressOverlay } from './components/ExportProgressOverlay';
+import { exportFastTextPdf } from './utils/fastPdfExport';
 
 function App() {
   const [appView, setAppView] = useState<'landing' | 'studio'>('landing');
@@ -42,7 +38,6 @@ function App() {
   const [isStyling, setIsStyling] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState({ current: 0, total: 0 });
-  const [pdfExportPageIndex, setPdfExportPageIndex] = useState<number | null>(null);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [isGeneratingImageMap, setIsGeneratingImageMap] = useState<{ [key: number]: boolean }>({});
   const [activeMobileView, setActiveMobileView] = useState<'controls' | 'preview'>('controls');
@@ -54,45 +49,19 @@ function App() {
       return;
     }
 
-    const html2pdf = (window as any).html2pdf;
-    if (!html2pdf) {
-      alert('PDF converter library is still loading. Please wait a moment and try again.');
-      return;
-    }
-
-    const element = document.getElementById('ebook-download-area') as HTMLElement | null;
-    if (!element) {
-      alert('Export area not found. Please reload the page and try again.');
-      return;
-    }
-
-    if (sections.length > 50) {
-      const minutes = Math.max(5, Math.round(sections.length * 0.15));
-      const proceed = window.confirm(
-        `This book has ${sections.length} pages. Export usually takes about ${minutes} minutes. Keep this tab open and wait for the download to start. Continue?`
-      );
-      if (!proceed) return;
-    }
-
     const filename = `${(bookTitle || 'ebook').toLowerCase().replace(/\s+/g, '_')}_ebook.pdf`;
     const abort = new AbortController();
     exportAbortRef.current = abort;
     setIsExporting(true);
     setExportProgress({ current: 0, total: sections.length });
 
-    const restoreCaptureStyles = prepareElementForPdfCapture(element);
-
     try {
-      await exportEbookPageByPage({
-        totalPages: sections.length,
+      await exportFastTextPdf({
+        bookTitle,
+        sections,
         filename,
         signal: abort.signal,
         onProgress: (current, total) => setExportProgress({ current, total }),
-        onRenderPage: (pageIndex) => {
-          flushSync(() => setPdfExportPageIndex(pageIndex));
-        },
-        getPageElement: () =>
-          element.querySelector('.ebook-page') as HTMLElement | null,
       });
     } catch (err) {
       console.error('PDF generation failed: ', err);
@@ -100,14 +69,10 @@ function App() {
       if (message.includes('cancelled')) {
         alert('PDF export cancelled.');
       } else {
-        alert(
-          `Could not finish the PDF export${message ? ` (${message})` : ''}. Try again and keep this tab open until the progress bar reaches 100%.`
-        );
+        alert(`Could not export PDF${message ? ` (${message})` : ''}. Please try again.`);
       }
     } finally {
       exportAbortRef.current = null;
-      flushSync(() => setPdfExportPageIndex(null));
-      restoreCaptureStyles();
       setIsExporting(false);
       setExportProgress({ current: 0, total: 0 });
     }
@@ -409,7 +374,6 @@ function App() {
             onDownloadPDF={handleDownloadPDF}
             isExporting={isExporting}
             exportProgress={exportProgress}
-            onCancelExport={handleCancelExport}
             onNavigateToDashboard={() => setActiveMobileView('controls')}
             activePageIndex={activePageIndex}
             onSelectPage={handleSelectPage}
@@ -438,33 +402,13 @@ function App() {
         </div>
       </div>
 
-      {/* Dedicated off-screen container for PDF download generation to prevent display:none failures on mobile */}
-      <div
-        id="ebook-download-wrapper"
-        style={{ position: 'fixed', left: 0, top: 0, zIndex: -1, pointerEvents: 'none', opacity: 0 }}
-        className="no-print"
-        aria-hidden
-      >
-        <div id="ebook-download-area" className={`theme-${selectedTheme} ebook-preview-container`}>
-          {pdfExportPageIndex !== null && sections[pdfExportPageIndex] && (
-            <div className="ebook-page-wrapper page-break">
-              <PageLayout
-                section={sections[pdfExportPageIndex]}
-                pageIndex={pdfExportPageIndex + 1}
-                totalPages={sections.length}
-                bookTitle={bookTitle}
-                selectedTheme={selectedTheme}
-                onUpdateSection={() => {}}
-                onDeleteSection={() => {}}
-                onRegenerateImage={async () => {}}
-                isGeneratingImage={false}
-                isActive={true}
-                pdfExportMode
-              />
-            </div>
-          )}
-        </div>
-      </div>
+      {isExporting && exportProgress.total > 0 && (
+        <ExportProgressOverlay
+          current={exportProgress.current}
+          total={exportProgress.total}
+          onCancel={handleCancelExport}
+        />
+      )}
     </div>
   );
 }

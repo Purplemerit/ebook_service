@@ -153,6 +153,8 @@ export async function exportEbookPageByPage(options: PageByPageExportOptions): P
     await document.fonts.ready.catch(() => undefined);
   }
 
+  let failedPages = 0;
+
   for (let i = 0; i < totalPages; i++) {
     if (signal?.aborted) {
       throw new Error('Export cancelled.');
@@ -160,20 +162,27 @@ export async function exportEbookPageByPage(options: PageByPageExportOptions): P
 
     onProgress?.(i + 1, totalPages);
 
-    await onRenderPage(i);
-    await waitForNextPaint();
-    await yieldToBrowser(40);
+    let imgData: string | null = null;
 
-    const pageEl = await waitForPageElement(getPageElement);
-    await waitForExportImages(pageEl, 2500);
+    try {
+      await onRenderPage(i);
+      await waitForNextPaint();
+      await yieldToBrowser(40);
 
-    const canvas = await withTimeout(
-      html2pdf().set({ html2canvas: html2canvasOpts }).from(pageEl).toCanvas() as Promise<HTMLCanvasElement>,
-      PAGE_CAPTURE_TIMEOUT_MS,
-      `Page ${i + 1} capture`
-    );
+      const pageEl = await waitForPageElement(getPageElement);
+      await waitForExportImages(pageEl, 2500);
 
-    const imgData = canvas.toDataURL('image/jpeg', EXPORT_JPEG_QUALITY);
+      const canvas = await withTimeout(
+        html2pdf().set({ html2canvas: html2canvasOpts }).from(pageEl).toCanvas() as Promise<HTMLCanvasElement>,
+        PAGE_CAPTURE_TIMEOUT_MS,
+        `Page ${i + 1} capture`
+      );
+
+      imgData = canvas.toDataURL('image/jpeg', EXPORT_JPEG_QUALITY);
+    } catch (pageErr) {
+      failedPages++;
+      console.warn(`PDF export skipped page ${i + 1}:`, pageErr);
+    }
 
     if (!doc) {
       doc = new jspdf({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
@@ -181,7 +190,17 @@ export async function exportEbookPageByPage(options: PageByPageExportOptions): P
       doc.addPage();
     }
 
-    doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    if (imgData) {
+      doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    } else {
+      doc.setFontSize(14);
+      doc.setTextColor(40, 40, 40);
+      doc.text(`Page ${i + 1}`, 20, 30);
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text('This page could not be rendered — re-export to retry.', 20, 42);
+    }
+
     await yieldToBrowser(8);
   }
 
@@ -190,4 +209,8 @@ export async function exportEbookPageByPage(options: PageByPageExportOptions): P
   }
 
   triggerPdfDownload(doc, filename);
+
+  if (failedPages > 0) {
+    console.warn(`PDF export finished with ${failedPages} page(s) using fallback placeholders.`);
+  }
 }
