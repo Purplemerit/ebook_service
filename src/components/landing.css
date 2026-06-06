@@ -1,0 +1,869 @@
+/* Celestial landing page — soft lavender / peach gradient aesthetic */
+
+.celestial-landing {
+  --cel-lavender: #c4b5d4;
+  --cel-peach: #f0d4c8;
+  --cel-cream: #faf7f4;
+  --cel-warm: #e8c4b8;
+  --cel-text: #1c1c1c;
+  --cel-muted: #5c5c5c;
+  --cel-serif: 'Playfair Display', Georgia, serif;
+  --cel-sans: 'Poppins', 'Montserrat', sans-serif;
+
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--cel-lavender) 0%,
+    var(--cel-cream) 28%,
+    var(--cel-peach) 55%,
+    var(--cel-warm) 78%,
+    var(--cel-lavender) 100%
+  );
+  color: var(--cel-text);
+  font-family: var(--cel-sans);
+  position: relative;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+html:has(.celestial-landing) {
+  scroll-behavior: smooth;
+}
+
+/* Bokeh blobs */
+.celestial-bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.celestial-bg-blob-1 {
+  width: 420px;
+  height: 420px;
+  background: rgba(255, 255, 255, 0.45);
+  top: -80px;
+  left: -100px;
+}
+.celestial-bg-blob-2 {
+  width: 320px;
+  height: 320px;
+  background: rgba(255, 255, 255, 0.35);
+  top: 40%;
+  right: -80px;
+}
+.celestial-bg-blob-3 {
+  width: 280px;
+  height: 280px;
+  background: rgba(240, 212, 200, 0.5);
+  bottom: 10%;
+  left: 20%;
+}
+
+/* Header */
+.celestial-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 2.5rem;
+  background: rgba(250, 247, 244, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(28, 28, 28, 0.06);
+}
+
+.celestial-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--cel-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--cel-text);
+}
+
+.celestial-nav {
+  display: flex;
+  gap: 1.75rem;
+}
+
+.celestial-nav button {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.celestial-nav button:hover {
+  color: var(--cel-text);
+}
+
+.celestial-nav-cta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(28, 28, 28, 0.15);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--cel-text);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.celestial-nav-cta:hover:not(:disabled) {
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.celestial-nav-cta:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Main */
+.celestial-main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+.celestial-hero {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 3rem 2.5rem 4rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.celestial-hero-left {
+  position: relative;
+}
+
+.celestial-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+  margin-bottom: 1rem;
+}
+
+.celestial-headline {
+  font-family: var(--cel-serif);
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--cel-text);
+}
+
+.celestial-tagline {
+  margin-top: 1.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+}
+
+.celestial-sparkle {
+  position: absolute;
+  color: var(--cel-text);
+  opacity: 0.7;
+}
+.celestial-sparkle-1 { top: -0.5rem; right: 2rem; }
+.celestial-sparkle-2 { top: 4rem; left: -0.5rem; }
+.celestial-sparkle-3 { bottom: 2rem; right: 0; }
+
+/* Arched image */
+.celestial-arch-frame {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 4;
+  border-radius: 50% 50% 0 0;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(28, 28, 28, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.celestial-arch-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(0.98);
+}
+
+.celestial-hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.celestial-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--cel-text);
+  text-align: justify;
+  margin: 0;
+}
+
+.celestial-body-secondary {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--cel-muted);
+  margin: 0;
+}
+
+.celestial-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  align-self: flex-start;
+  padding: 0.85rem 1.75rem;
+  background: var(--cel-text);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--cel-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(28, 28, 28, 0.2);
+}
+
+.celestial-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(28, 28, 28, 0.25);
+}
+
+.celestial-btn-primary:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.celestial-btn-large {
+  padding: 1rem 2.25rem;
+  font-size: 0.85rem;
+}
+
+.celestial-error {
+  font-size: 0.78rem;
+  color: #b91c1c;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(254, 226, 226, 0.6);
+  border-radius: 8px;
+}
+
+/* Sections */
+.celestial-section {
+  padding: 5rem 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.celestial-section-alt {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 24px;
+  margin: 0 2rem 2rem;
+  max-width: calc(1100px + 4rem);
+}
+
+.celestial-section-title {
+  font-family: var(--cel-serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 2.5rem;
+  letter-spacing: -0.01em;
+}
+
+.celestial-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.celestial-feature-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1.75rem 1.5rem;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.celestial-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(28, 28, 28, 0.08);
+}
+
+.celestial-feature-card svg {
+  color: var(--cel-muted);
+  margin-bottom: 1rem;
+}
+
+.celestial-feature-card h3 {
+  font-family: var(--cel-serif);
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.celestial-feature-card p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--cel-muted);
+  margin: 0;
+}
+
+/* Steps */
+.celestial-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.celestial-steps li {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.celestial-step-num {
+  font-family: var(--cel-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cel-lavender);
+  flex-shrink: 0;
+  width: 2.5rem;
+}
+
+.celestial-steps strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.celestial-steps p {
+  font-size: 0.82rem;
+  color: var(--cel-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* About */
+.celestial-about-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.celestial-about-text {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--cel-muted);
+  margin: 0;
+  text-align: justify;
+}
+
+.celestial-about-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.celestial-stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+}
+
+/* CTA section */
+.celestial-cta-section {
+  text-align: center;
+  padding-bottom: 6rem;
+}
+
+.celestial-cta-text {
+  font-family: var(--cel-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--cel-muted);
+  margin: 0 0 1.75rem;
+}
+
+.celestial-cta-section .celestial-btn-primary {
+  margin: 0 auto;
+}
+
+/* Footer */
+.celestial-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2.5rem;
+  border-top: 1px solid rgba(28, 28, 28, 0.08);
+  font-size: 0.72rem;
+  color: var(--cel-muted);
+  letter-spacing: 0.04em;
+}
+
+.celestial-footer-tag {
+  font-style: italic;
+  font-family: var(--cel-serif);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .celestial-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    min-height: auto;
+    padding-top: 2rem;
+  }
+
+  .celestial-hero-left {
+    order: 1;
+  }
+
+  .celestial-hero-center {
+    order: 2;
+  }
+
+  .celestial-hero-right {
+    order: 3;
+    align-items: center;
+  }
+
+  .celestial-body,
+  .celestial-body-secondary {
+    text-align: center;
+  }
+
+  .celestial-btn-primary {
+    align-self: center;
+  }
+
+  .celestial-nav {
+    display: none;
+  }
+
+  .celestial-about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .celestial-about-stat {
+    border-radius: 20px;
+    aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .celestial-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .celestial-hero,
+  .celestial-section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .celestial-section-alt {
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   Celestial Studio — sidebar panels matching landing page
+   ========================================================================== */
+
+.celestial-studio {
+  --cel-lavender: #c4b5d4;
+  --cel-peach: #f0d4c8;
+  --cel-cream: #faf7f4;
+  --cel-warm: #e8c4b8;
+  --cel-text: #1c1c1c;
+  --cel-muted: #5c5c5c;
+  --cel-serif: 'Playfair Display', Georgia, serif;
+  --cel-sans: 'Poppins', 'Montserrat', sans-serif;
+
+  font-family: var(--cel-sans);
+  color: var(--cel-text);
+  background: linear-gradient(
+    160deg,
+    var(--cel-lavender) 0%,
+    var(--cel-cream) 35%,
+    var(--cel-peach) 65%,
+    var(--cel-warm) 100%
+  );
+  position: relative;
+}
+
+.celestial-studio-header {
+  padding: 1.25rem 1.25rem 1rem;
+  background: rgba(250, 247, 244, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(28, 28, 28, 0.06);
+}
+
+.celestial-studio-brand {
+  font-family: var(--cel-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--cel-text);
+}
+
+.celestial-studio-brand em {
+  font-style: italic;
+  color: var(--cel-muted);
+}
+
+.celestial-studio-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--cel-muted);
+  margin-top: 0.35rem;
+}
+
+.celestial-studio-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--cel-muted);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(28, 28, 28, 0.08);
+  padding: 0.35rem 0.7rem;
+  border-radius: 9999px;
+}
+
+.celestial-studio-status-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #9ca3af;
+}
+
+.celestial-studio-status-dot.ready {
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+.celestial-studio-tabs {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(250, 247, 244, 0.5);
+  border-bottom: 1px solid rgba(28, 28, 28, 0.06);
+}
+
+.celestial-studio-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(28, 28, 28, 0.08);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.celestial-studio-tab:hover:not(:disabled) {
+  color: var(--cel-text);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.celestial-studio-tab.active {
+  background: var(--cel-text);
+  color: #fff;
+  border-color: var(--cel-text);
+  box-shadow: 0 6px 18px rgba(28, 28, 28, 0.18);
+}
+
+.celestial-studio-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.celestial-studio-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.celestial-studio-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #166534;
+  background: rgba(220, 252, 231, 0.65);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 14px;
+}
+
+.celestial-studio-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.celestial-studio-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cel-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.celestial-studio-label svg {
+  color: var(--cel-muted);
+  opacity: 0.85;
+}
+
+.celestial-studio-panel {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 8px 24px rgba(28, 28, 28, 0.06);
+  transition: box-shadow 0.25s;
+}
+
+.celestial-studio-panel:hover {
+  box-shadow: 0 12px 32px rgba(28, 28, 28, 0.08);
+}
+
+.celestial-studio-input {
+  width: 100%;
+  font-family: var(--cel-serif);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cel-text);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(28, 28, 28, 0.1);
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.celestial-studio-input::placeholder {
+  color: rgba(92, 92, 92, 0.55);
+  font-family: var(--cel-sans);
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.celestial-studio-input:focus {
+  outline: none;
+  border-color: rgba(28, 28, 28, 0.25);
+  box-shadow: 0 0 0 3px rgba(196, 181, 212, 0.45);
+  background: #fff;
+}
+
+.celestial-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.celestial-theme-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  padding: 1rem;
+  min-height: 148px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.celestial-theme-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(28, 28, 28, 0.08);
+}
+
+.celestial-theme-card.selected {
+  border-color: var(--cel-text);
+  box-shadow: 0 12px 32px rgba(28, 28, 28, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.celestial-theme-card-name {
+  font-family: var(--cel-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--cel-text);
+}
+
+.celestial-theme-card-badge {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cel-text);
+  background: rgba(196, 181, 212, 0.45);
+  border: 1px solid rgba(28, 28, 28, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.celestial-theme-card-desc {
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--cel-muted);
+  margin: 0.4rem 0 0.75rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.celestial-theme-swatches {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+}
+
+.celestial-theme-swatch {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 1px solid rgba(28, 28, 28, 0.1);
+}
+
+.celestial-theme-fonts {
+  font-size: 0.62rem;
+  color: var(--cel-muted);
+  letter-spacing: 0.02em;
+  border-top: 1px solid rgba(28, 28, 28, 0.06);
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.celestial-studio-footer {
+  padding: 0.9rem 1.25rem;
+  background: rgba(250, 247, 244, 0.65);
+  border-top: 1px solid rgba(28, 28, 28, 0.06);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  color: var(--cel-muted);
+}
+
+.celestial-studio-footer-brand {
+  font-family: var(--cel-serif);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--cel-text);
+}
+
+.celestial-studio-divider {
+  border: none;
+  border-top: 1px solid rgba(28, 28, 28, 0.08);
+  margin: 0.5rem 0;
+}
+
+.celestial-studio-btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--cel-text);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--cel-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 18px rgba(28, 28, 28, 0.18);
+}
+
+.celestial-studio-btn-dark:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(28, 28, 28, 0.22);
+}
+
+.celestial-studio-btn-dark:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+@media (max-width: 480px) {
+  .celestial-theme-grid {
+    grid-template-columns: 1fr;
+  }
+}
