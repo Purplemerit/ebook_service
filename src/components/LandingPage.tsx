@@ -41,7 +41,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <button type="button" onClick={() => scrollTo('features')}>Features</button>
           <button type="button" onClick={() => scrollTo('how-it-works')}>How It Works</button>
           <button type="button" onClick={() => scrollTo('about')}>About</button>
-          <button type="button" onClick={() => scrollTo('contact')}>Contact</button>
         </nav>
       </header>
 
