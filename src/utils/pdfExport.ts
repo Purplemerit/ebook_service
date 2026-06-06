@@ -39,22 +39,23 @@ export function estimateExportMinutes(totalPages: number): number {
   return Math.max(1, Math.round(totalPages * 0.15));
 }
 
-/** Prepare an off-screen element so html2canvas can paint it. */
+/** Make the export container paintable — must stay in the viewport (no off-screen transform). */
 export function prepareElementForPdfCapture(element: HTMLElement): () => void {
   const wrapper = element.parentElement as HTMLElement | null;
   const prevWrapperStyle = wrapper?.getAttribute('style') ?? '';
   const prevElementStyle = element.getAttribute('style') ?? '';
+  const prevWrapperAria = wrapper?.getAttribute('aria-hidden') ?? null;
 
   if (wrapper) {
+    wrapper.removeAttribute('aria-hidden');
     wrapper.style.cssText = [
       'position:fixed',
       'left:0',
       'top:0',
       'width:595px',
-      'z-index:2147483646',
+      'z-index:9000',
       'pointer-events:none',
       'overflow:visible',
-      'transform:translateX(-200vw)',
       'opacity:1',
       'visibility:visible',
     ].join(';');
@@ -72,6 +73,8 @@ export function prepareElementForPdfCapture(element: HTMLElement): () => void {
     if (wrapper) {
       if (prevWrapperStyle) wrapper.setAttribute('style', prevWrapperStyle);
       else wrapper.removeAttribute('style');
+      if (prevWrapperAria !== null) wrapper.setAttribute('aria-hidden', prevWrapperAria);
+      else wrapper.setAttribute('aria-hidden', 'true');
     }
     if (prevElementStyle) element.setAttribute('style', prevElementStyle);
     else element.removeAttribute('style');
@@ -96,16 +99,18 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): P
   ]);
 }
 
-/** Poll until the export page element is mounted. */
+/** Poll until the export page is mounted and laid out with real dimensions. */
 export async function waitForPageElement(
   getPageElement: () => HTMLElement | null,
-  timeoutMs = 2500
+  timeoutMs = 6000
 ): Promise<HTMLElement> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const el = getPageElement();
-    if (el) return el;
-    await yieldToBrowser(12);
+    if (el && el.offsetWidth >= 400 && el.offsetHeight >= 400) {
+      return el;
+    }
+    await yieldToBrowser(20);
   }
   throw new Error('Export page element not ready — try again.');
 }
@@ -278,25 +283,31 @@ async function capturePageElement(
     html2canvas(pageEl, {
       scale: settings.scale,
       useCORS: true,
-      allowTaint: false,
+      allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      width: 595,
-      windowWidth: 595,
+      width: pageEl.offsetWidth,
+      height: pageEl.offsetHeight,
+      windowWidth: pageEl.offsetWidth,
+      windowHeight: pageEl.offsetHeight,
       scrollX: 0,
       scrollY: 0,
-      imageTimeout: 1500,
-      removeContainer: true,
-      ignoreElements: (el) => el.classList?.contains('no-print') ?? false,
-      onclone: (clonedDoc) => {
+      imageTimeout: 5000,
+      onclone: (clonedDoc, clonedPage) => {
         clonedDoc.querySelectorAll('.no-print').forEach((node) => {
           (node as HTMLElement).style.display = 'none';
         });
+        (clonedPage as HTMLElement).style.boxShadow = 'none';
+        (clonedPage as HTMLElement).style.transform = 'none';
       },
     }),
     settings.pageTimeoutMs,
     `Page ${pageNum} capture`
   );
+
+  if (canvas.width < 10 || canvas.height < 10) {
+    throw new Error(`Page ${pageNum} capture produced an empty canvas`);
+  }
 
   return canvasToJpegDataUrl(canvas, settings.quality);
 }
@@ -328,7 +339,8 @@ export async function exportStyledEbookPdf(options: PageByPageExportOptions): Pr
     try {
       await onRenderPage(i);
       await waitForNextPaint();
-      await yieldToBrowser(settings.yieldMs);
+      await waitForNextPaint();
+      await yieldToBrowser(Math.max(settings.yieldMs, 80));
 
       const pageEl = await waitForPageElement(getPageElement);
       await waitForExportImages(pageEl, settings.imageWaitMs);

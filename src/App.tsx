@@ -456,9 +456,16 @@ function App() {
 
       <div
         id="ebook-download-wrapper"
-        style={{ position: 'fixed', left: 0, top: 0, zIndex: -1, pointerEvents: 'none', opacity: 0 }}
-        className="no-print"
-        aria-hidden
+        style={{
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          width: 595,
+          zIndex: 1,
+          pointerEvents: 'none',
+          visibility: pdfExportPageIndex !== null ? 'visible' : 'hidden',
+        }}
+        aria-hidden={pdfExportPageIndex === null}
       >
         <div id="ebook-download-area" className={`theme-${selectedTheme} ebook-preview-container`}>
           {pdfExportPageIndex !== null && sections[pdfExportPageIndex] && (
