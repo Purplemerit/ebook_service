@@ -159,6 +159,22 @@ class RequestQueue {
 const imageQueue = new RequestQueue(5);
 const resolvedCache = new Map<string, string>();
 const blobUrls = new Set<string>();
+/** In-memory JPEG data URLs for instant PDF capture (no network/CORS during export). */
+const exportDataUrlCache = new Map<string, string>();
+
+export function clearExportImageCache(): void {
+  exportDataUrlCache.clear();
+}
+
+export function cacheExportImageDataUrl(prompt: string, seed: number, dataUrl: string): void {
+  exportDataUrlCache.set(cacheKey(prompt, seed), dataUrl);
+}
+
+export function getExportImageForCapture(prompt: string, seed = 0): string {
+  const cached = exportDataUrlCache.get(cacheKey(prompt, seed));
+  if (cached) return cached;
+  return getExportSafeImageUrl(prompt, seed);
+}
 
 export function invalidateImageCache(prompt: string, seed: number): void {
   resolvedCache.delete(cacheKey(prompt, seed));

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import {
-  getExportSafeImageUrl,
+  getExportImageForCapture,
   getPlaceholderImageUrl,
   getStockFallbackUrl,
   resolveImageUrl,
@@ -29,7 +29,7 @@ export const ResolvedImage: React.FC<ResolvedImageProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const instantSrc = useMemo(
-    () => (exportMode ? getExportSafeImageUrl(prompt, seed) : getStockFallbackUrl(prompt, seed)),
+    () => (exportMode ? getExportImageForCapture(prompt, seed) : getStockFallbackUrl(prompt, seed)),
     [exportMode, prompt, seed]
   );
   const [src, setSrc] = useState(instantSrc);

@@ -5,7 +5,7 @@ import type { ThemeId } from '../themes/types';
 import {
   getThemeImageSlotsForPage,
   getPlaceholderImageUrl,
-  getExportSafeImageUrl,
+  getExportImageForCapture,
   resolveImageUrl,
 } from '../utils/imageHelper';
 import { ThemeCover, ThemeEditorial } from './ThemeLayout';
@@ -56,7 +56,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     const prompt = section.imagePrompt || chapterHeadingText;
 
     if (pdfExportMode) {
-      setImgSrc(getExportSafeImageUrl(prompt, pageIndex));
+      setImgSrc(getExportImageForCapture(prompt, pageIndex));
       setImgLoading(false);
       return;
     }
