@@ -467,7 +467,11 @@ function App() {
         }}
         aria-hidden={pdfExportPageIndex === null}
       >
-        <div id="ebook-download-area" className={`theme-${selectedTheme} ebook-preview-container`}>
+        <div
+          id="ebook-download-area"
+          className={`theme-${selectedTheme} ebook-preview-container`}
+          style={{ width: 595, maxWidth: 595, overflow: 'hidden' }}
+        >
           {pdfExportPageIndex !== null && sections[pdfExportPageIndex] && (
             <div className="ebook-page-wrapper page-break">
               <PageLayout

@@ -295,12 +295,49 @@ function applyExportCloneStyles(page: HTMLElement): void {
   page.style.boxShadow = 'none';
   page.style.transform = 'none';
   page.style.width = `${PAGE_CSS_WIDTH}px`;
+  page.style.maxWidth = `${PAGE_CSS_WIDTH}px`;
+  page.style.height = `${PAGE_CSS_HEIGHT}px`;
   page.style.minHeight = `${PAGE_CSS_HEIGHT}px`;
-  page.style.height = 'auto';
-  page.style.maxHeight = 'none';
-  page.style.overflow = 'visible';
+  page.style.maxHeight = `${PAGE_CSS_HEIGHT}px`;
+  page.style.overflow = 'hidden';
   page.style.setProperty('-webkit-font-smoothing', 'antialiased');
   page.style.setProperty('text-rendering', 'optimizeLegibility');
+}
+
+/**
+ * Shrink the whole page uniformly to fit A4 (like the preview) — never slice mid-line.
+ */
+export function fitPageForExport(pageEl: HTMLElement): () => void {
+  const prev = {
+    zoom: pageEl.style.zoom,
+    height: pageEl.style.height,
+    width: pageEl.style.width,
+    maxWidth: pageEl.style.maxWidth,
+    overflow: pageEl.style.overflow,
+  };
+
+  const naturalH = pageEl.scrollHeight;
+  const naturalW = pageEl.scrollWidth;
+  const scaleH = naturalH > PAGE_CSS_HEIGHT ? PAGE_CSS_HEIGHT / naturalH : 1;
+  const scaleW = naturalW > PAGE_CSS_WIDTH ? PAGE_CSS_WIDTH / naturalW : 1;
+  const scale = Math.min(scaleH, scaleW, 1);
+
+  pageEl.style.width = `${PAGE_CSS_WIDTH}px`;
+  pageEl.style.maxWidth = `${PAGE_CSS_WIDTH}px`;
+  pageEl.style.height = `${PAGE_CSS_HEIGHT}px`;
+  pageEl.style.overflow = 'hidden';
+
+  if (scale < 0.995) {
+    pageEl.style.zoom = String(scale);
+  }
+
+  return () => {
+    pageEl.style.zoom = prev.zoom;
+    pageEl.style.height = prev.height;
+    pageEl.style.width = prev.width;
+    pageEl.style.maxWidth = prev.maxWidth;
+    pageEl.style.overflow = prev.overflow;
+  };
 }
 
 async function capturePageElement(
@@ -308,9 +345,6 @@ async function capturePageElement(
   pageNum: number,
   settings: CaptureSettings
 ): Promise<{ canvas: HTMLCanvasElement; format: 'JPEG' | 'PNG' }> {
-  const captureWidth = Math.max(pageEl.scrollWidth, pageEl.offsetWidth, PAGE_CSS_WIDTH);
-  const captureHeight = Math.max(pageEl.scrollHeight, pageEl.offsetHeight, PAGE_CSS_HEIGHT);
-
   const canvas = await withTimeout(
     html2canvas(pageEl, {
       scale: settings.scale,
@@ -318,10 +352,10 @@ async function capturePageElement(
       allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      width: captureWidth,
-      height: captureHeight,
-      windowWidth: captureWidth,
-      windowHeight: captureHeight,
+      width: PAGE_CSS_WIDTH,
+      height: PAGE_CSS_HEIGHT,
+      windowWidth: PAGE_CSS_WIDTH,
+      windowHeight: PAGE_CSS_HEIGHT,
       scrollX: 0,
       scrollY: 0,
       imageTimeout: 8000,
@@ -346,43 +380,21 @@ async function capturePageElement(
 const PDF_W_MM = 210;
 const PDF_H_MM = 297;
 
-/** Slice a tall capture into full A4 pages so nothing is clipped at the bottom. */
-async function addCanvasToPdf(
+/** One styled preview page → one PDF page (no arbitrary slicing). */
+async function addSinglePageToPdf(
   doc: jsPDF,
   canvas: HTMLCanvasElement,
   format: 'JPEG' | 'PNG',
   jpegQuality: number,
   isFirstPdfPage: { value: boolean }
 ): Promise<void> {
-  const pxPerMm = canvas.width / PDF_W_MM;
-  const sliceHeightPx = Math.max(1, Math.round(PDF_H_MM * pxPerMm));
-
-  let srcY = 0;
-  while (srcY < canvas.height) {
-    if (!isFirstPdfPage.value) {
-      doc.addPage();
-    }
-    isFirstPdfPage.value = false;
-
-    const remaining = canvas.height - srcY;
-    const drawH = Math.min(sliceHeightPx, remaining);
-
-    const sliceCanvas = document.createElement('canvas');
-    sliceCanvas.width = canvas.width;
-    sliceCanvas.height = sliceHeightPx;
-    const ctx = sliceCanvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Canvas slice failed');
-    }
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-    ctx.drawImage(canvas, 0, srcY, canvas.width, drawH, 0, 0, canvas.width, drawH);
-
-    const dataUrl = await canvasToDataUrl(sliceCanvas, format, jpegQuality);
-    doc.addImage(dataUrl, format, 0, 0, PDF_W_MM, PDF_H_MM);
-    srcY += sliceHeightPx;
+  if (!isFirstPdfPage.value) {
+    doc.addPage();
   }
+  isFirstPdfPage.value = false;
+
+  const dataUrl = await canvasToDataUrl(canvas, format, jpegQuality);
+  doc.addImage(dataUrl, format, 0, 0, PDF_W_MM, PDF_H_MM);
 }
 
 /**
@@ -419,14 +431,21 @@ export async function exportStyledEbookPdf(options: PageByPageExportOptions): Pr
       await waitForExportImages(pageEl, settings.imageWaitMs);
       await waitForNextPaint();
       await yieldToBrowser(60);
-      pageCapture = await capturePageElement(pageEl, i + 1, settings);
+
+      const restoreFit = fitPageForExport(pageEl);
+      await waitForNextPaint();
+      try {
+        pageCapture = await capturePageElement(pageEl, i + 1, settings);
+      } finally {
+        restoreFit();
+      }
     } catch (pageErr) {
       failedPages++;
       console.warn(`PDF export skipped page ${i + 1}:`, pageErr);
     }
 
     if (pageCapture) {
-      await addCanvasToPdf(
+      await addSinglePageToPdf(
         doc,
         pageCapture.canvas,
         pageCapture.format,
