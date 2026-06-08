@@ -1152,7 +1152,13 @@ button:disabled { opacity: 0.5 !important; cursor: not-allowed !important; }
   margin-bottom: 0.75rem;
 }
 
-/* Off-screen PDF export — fixed A4 frame matching the preview exactly */
+/* PDF export capture — same styles as preview; only fix frame + hide controls */
+body.pdf-exporting #ebook-download-wrapper {
+  z-index: 9000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 #ebook-download-area {
   width: 595px !important;
   max-width: 595px !important;
@@ -1164,138 +1170,51 @@ button:disabled { opacity: 0.5 !important; cursor: not-allowed !important; }
   width: 595px !important;
   max-width: 595px !important;
   min-height: 842px !important;
-  height: 842px !important;
-  max-height: 842px !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-  background-color: var(--eb-bg) !important;
-  color: var(--eb-text) !important;
   box-shadow: none !important;
-  justify-content: flex-start !important;
+  box-sizing: border-box !important;
   -webkit-font-smoothing: antialiased !important;
-  text-rendering: optimizeLegibility !important;
-}
-
-#ebook-download-area .ebook-page-body {
-  flex: 1 1 auto !important;
-  overflow: hidden !important;
-  min-height: 0 !important;
-  width: 100% !important;
-  padding-bottom: 1rem !important;
-}
-
-#ebook-download-area .layout-wellness,
-#ebook-download-area .wellness-split,
-#ebook-download-area .wellness-text,
-#ebook-download-area .wellness-columns {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-#ebook-download-area .wellness-columns {
-  font-size: 0.76rem !important;
-  line-height: 1.65 !important;
-  column-gap: 1rem !important;
-}
-
-#ebook-download-area .wellness-lead {
-  font-size: 0.82rem !important;
-  line-height: 1.6 !important;
 }
 
 #ebook-download-area .ebook-page-footer {
   flex-shrink: 0 !important;
-  margin-top: 1rem !important;
-  padding-top: 0.75rem !important;
-  padding-bottom: 0.35rem !important;
 }
 
-#ebook-download-area .ebook-p,
-#ebook-download-area .ebook-columns p {
-  font-size: 0.9rem !important;
-  line-height: 1.72 !important;
-  margin-bottom: 0.9rem !important;
-  color: var(--eb-text) !important;
-  opacity: 1 !important;
+#ebook-download-area .sp-columns,
+#ebook-download-area .warm-body-columns,
+#ebook-download-area .wellness-columns,
+#ebook-download-area .ebook-columns {
+  column-fill: auto !important;
 }
 
-#ebook-download-area .ebook-h1 {
-  font-size: 1.85rem !important;
-  line-height: 1.25 !important;
-  margin-bottom: 1rem !important;
-}
-
-#ebook-download-area .ebook-image-frame img {
-  width: 100% !important;
-  height: auto !important;
-  min-height: 180px !important;
-  max-height: 280px !important;
-  object-fit: cover !important;
-}
-
-/* Editorial / warm-boho export readability */
-.theme-editorial #ebook-download-area .ebook-page-body {
-  padding: 1rem 1.5rem 1.5rem !important;
-}
-
-#ebook-download-area .layout-warm-boho {
-  gap: 0.85rem !important;
-  padding-bottom: 0.75rem !important;
-}
-
-#ebook-download-area .warm-body-columns {
-  font-size: 0.78rem !important;
-  line-height: 1.72 !important;
-  column-gap: 1.15rem !important;
-}
-
-#ebook-download-area .warm-checklist li {
-  font-size: 0.76rem !important;
-  line-height: 1.55 !important;
-  padding: 0.38rem 0 0.38rem 1.15rem !important;
-}
-
-#ebook-download-area .warm-lead {
-  font-size: 1rem !important;
-  line-height: 1.58 !important;
-  margin-bottom: 0.65rem !important;
-}
-
-#ebook-download-area .warm-arch-frame img,
-#ebook-download-area .warm-arch-img img {
-  width: 100% !important;
-  height: 145px !important;
-  object-fit: cover !important;
-  display: block !important;
-}
-
-#ebook-download-area .warm-gallery-card img,
-#ebook-download-area .warm-gallery-img img {
-  width: 100% !important;
-  height: 68px !important;
-  object-fit: cover !important;
-}
-
-#ebook-download-area .warm-footer-arch img,
-#ebook-download-area .warm-footer-arch-img img {
-  width: 100% !important;
-  height: 60px !important;
-  object-fit: cover !important;
-}
-
-#ebook-download-area .warm-cta-blob img,
-#ebook-download-area .warm-cta-img img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-
-#ebook-download-area img {
-  image-rendering: auto !important;
+#ebook-download-area .sp-columns p,
+#ebook-download-area .warm-body-columns p,
+#ebook-download-area .wellness-columns p {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
 }
 
 #ebook-download-area .no-print {
   display: none !important;
+}
+
+/* During export always use desktop A4 layout (ignore mobile breakpoints) */
+body.pdf-exporting #ebook-download-area .ebook-page {
+  padding: 3.5rem !important;
+  min-height: 842px !important;
+  height: 842px !important;
+  font-size: 1.05rem !important;
+}
+
+body.pdf-exporting #ebook-download-area .sp-row {
+  display: grid !important;
+  grid-template-columns: 0.85fr 1.15fr !important;
+}
+
+body.pdf-exporting #ebook-download-area .sp-columns,
+body.pdf-exporting #ebook-download-area .warm-body-columns,
+body.pdf-exporting #ebook-download-area .wellness-columns,
+body.pdf-exporting #ebook-download-area .layout-magazine .ebook-columns {
+  column-count: 2 !important;
 }
 
 /* Page break formatting for pdf download and print */

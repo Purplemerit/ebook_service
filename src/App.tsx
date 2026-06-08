@@ -78,6 +78,7 @@ function App() {
     setIsExporting(true);
     setExportProgress({ current: 0, total: sections.length });
     setExportStatus('Preparing images…');
+    document.body.classList.add('pdf-exporting');
 
     const restoreCaptureStyles = prepareElementForPdfCapture(element);
 
@@ -98,7 +99,10 @@ function App() {
         signal: abort.signal,
         onProgress: (current, total) => setExportProgress({ current, total }),
         onRenderPage: (pageIndex) => {
-          flushSync(() => setPdfExportPageIndex(pageIndex));
+          flushSync(() => {
+            setPdfExportPageIndex(pageIndex);
+            setActivePageIndex(pageIndex);
+          });
         },
         getPageElement: () =>
           element.querySelector('.ebook-page') as HTMLElement | null,
@@ -115,6 +119,7 @@ function App() {
       exportAbortRef.current = null;
       flushSync(() => setPdfExportPageIndex(null));
       restoreCaptureStyles();
+      document.body.classList.remove('pdf-exporting');
       setIsExporting(false);
       setExportProgress({ current: 0, total: 0 });
       setExportStatus('');

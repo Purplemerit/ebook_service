@@ -291,9 +291,10 @@ export interface PageByPageExportOptions {
   signal?: AbortSignal;
 }
 
-function applyExportCloneStyles(page: HTMLElement): void {
+const EXPORT_FIT_MARGIN = 0.97;
+
+function applyExportCloneStyles(page: HTMLElement, exportScale: number): void {
   page.style.boxShadow = 'none';
-  page.style.transform = 'none';
   page.style.width = `${PAGE_CSS_WIDTH}px`;
   page.style.maxWidth = `${PAGE_CSS_WIDTH}px`;
   page.style.height = `${PAGE_CSS_HEIGHT}px`;
@@ -302,50 +303,80 @@ function applyExportCloneStyles(page: HTMLElement): void {
   page.style.overflow = 'hidden';
   page.style.setProperty('-webkit-font-smoothing', 'antialiased');
   page.style.setProperty('text-rendering', 'optimizeLegibility');
+
+  if (exportScale < 0.995) {
+    page.style.transformOrigin = 'top center';
+    page.style.transform = `scale(${exportScale})`;
+  } else {
+    page.style.transform = 'none';
+  }
 }
 
 /**
- * Shrink the whole page uniformly to fit A4 (like the preview) — never slice mid-line.
+ * Measure natural page height, then scale the whole page to fit A4 (matches preview, no clipping).
  */
-export function fitPageForExport(pageEl: HTMLElement): () => void {
+export function fitPageForExport(pageEl: HTMLElement): { restore: () => void; scale: number } {
   const prev = {
     zoom: pageEl.style.zoom,
+    transform: pageEl.style.transform,
+    transformOrigin: pageEl.style.transformOrigin,
     height: pageEl.style.height,
+    minHeight: pageEl.style.minHeight,
+    maxHeight: pageEl.style.maxHeight,
     width: pageEl.style.width,
     maxWidth: pageEl.style.maxWidth,
     overflow: pageEl.style.overflow,
   };
 
-  const naturalH = pageEl.scrollHeight;
-  const naturalW = pageEl.scrollWidth;
-  const scaleH = naturalH > PAGE_CSS_HEIGHT ? PAGE_CSS_HEIGHT / naturalH : 1;
-  const scaleW = naturalW > PAGE_CSS_WIDTH ? PAGE_CSS_WIDTH / naturalW : 1;
-  const scale = Math.min(scaleH, scaleW, 1);
-
+  pageEl.style.zoom = '';
+  pageEl.style.transform = 'none';
   pageEl.style.width = `${PAGE_CSS_WIDTH}px`;
   pageEl.style.maxWidth = `${PAGE_CSS_WIDTH}px`;
+  pageEl.style.height = 'auto';
+  pageEl.style.minHeight = `${PAGE_CSS_HEIGHT}px`;
+  pageEl.style.maxHeight = 'none';
+  pageEl.style.overflow = 'visible';
+
+  const naturalH = Math.max(pageEl.scrollHeight, pageEl.getBoundingClientRect().height);
+  const naturalW = pageEl.scrollWidth;
+  const scaleH = naturalH > PAGE_CSS_HEIGHT ? (PAGE_CSS_HEIGHT / naturalH) * EXPORT_FIT_MARGIN : 1;
+  const scaleW = naturalW > PAGE_CSS_WIDTH ? (PAGE_CSS_WIDTH / naturalW) * EXPORT_FIT_MARGIN : 1;
+  const scale = Math.min(scaleH, scaleW, 1);
+
   pageEl.style.height = `${PAGE_CSS_HEIGHT}px`;
+  pageEl.style.minHeight = `${PAGE_CSS_HEIGHT}px`;
+  pageEl.style.maxHeight = `${PAGE_CSS_HEIGHT}px`;
   pageEl.style.overflow = 'hidden';
 
   if (scale < 0.995) {
-    pageEl.style.zoom = String(scale);
+    pageEl.style.transformOrigin = 'top center';
+    pageEl.style.transform = `scale(${scale})`;
   }
 
-  return () => {
-    pageEl.style.zoom = prev.zoom;
-    pageEl.style.height = prev.height;
-    pageEl.style.width = prev.width;
-    pageEl.style.maxWidth = prev.maxWidth;
-    pageEl.style.overflow = prev.overflow;
+  return {
+    scale,
+    restore: () => {
+      pageEl.style.zoom = prev.zoom;
+      pageEl.style.transform = prev.transform;
+      pageEl.style.transformOrigin = prev.transformOrigin;
+      pageEl.style.height = prev.height;
+      pageEl.style.minHeight = prev.minHeight;
+      pageEl.style.maxHeight = prev.maxHeight;
+      pageEl.style.width = prev.width;
+      pageEl.style.maxWidth = prev.maxWidth;
+      pageEl.style.overflow = prev.overflow;
+    },
   };
 }
 
-async function capturePageElement(
+async function renderPageCanvas(
   pageEl: HTMLElement,
   pageNum: number,
-  settings: CaptureSettings
-): Promise<{ canvas: HTMLCanvasElement; format: 'JPEG' | 'PNG' }> {
-  const canvas = await withTimeout(
+  settings: CaptureSettings,
+  exportScale: number,
+  useForeignObject: boolean
+): Promise<HTMLCanvasElement> {
+  return withTimeout(
     html2canvas(pageEl, {
       scale: settings.scale,
       useCORS: true,
@@ -359,16 +390,33 @@ async function capturePageElement(
       scrollX: 0,
       scrollY: 0,
       imageTimeout: 8000,
+      foreignObjectRendering: useForeignObject,
       onclone: (clonedDoc, clonedPage) => {
         clonedDoc.querySelectorAll('.no-print').forEach((node) => {
           (node as HTMLElement).style.display = 'none';
         });
-        applyExportCloneStyles(clonedPage as HTMLElement);
+        applyExportCloneStyles(clonedPage as HTMLElement, exportScale);
       },
     }),
     settings.pageTimeoutMs,
     `Page ${pageNum} capture`
   );
+}
+
+async function capturePageElement(
+  pageEl: HTMLElement,
+  pageNum: number,
+  settings: CaptureSettings,
+  exportScale: number
+): Promise<{ canvas: HTMLCanvasElement; format: 'JPEG' | 'PNG' }> {
+  let canvas: HTMLCanvasElement;
+
+  try {
+    canvas = await renderPageCanvas(pageEl, pageNum, settings, exportScale, true);
+  } catch (foreignObjectErr) {
+    console.warn(`Page ${pageNum}: foreignObject capture failed, retrying…`, foreignObjectErr);
+    canvas = await renderPageCanvas(pageEl, pageNum, settings, exportScale, false);
+  }
 
   if (canvas.width < 100 || canvas.height < 100) {
     throw new Error(`Page ${pageNum} capture produced an empty canvas`);
@@ -432,10 +480,11 @@ export async function exportStyledEbookPdf(options: PageByPageExportOptions): Pr
       await waitForNextPaint();
       await yieldToBrowser(60);
 
-      const restoreFit = fitPageForExport(pageEl);
+      const { restore: restoreFit, scale: exportScale } = fitPageForExport(pageEl);
+      await waitForNextPaint();
       await waitForNextPaint();
       try {
-        pageCapture = await capturePageElement(pageEl, i + 1, settings);
+        pageCapture = await capturePageElement(pageEl, i + 1, settings, exportScale);
       } finally {
         restoreFit();
       }
