@@ -841,3 +841,270 @@ export const ThemeEditorial: React.FC<ThemeLayoutProps> = (props) => {
     </div>
   );
 };
+
+interface ThemeMinimalBlackProps extends ThemeLayoutProps {
+  layout: EbookSection['layout'];
+}
+
+export const ThemeMinimalBlack: React.FC<ThemeMinimalBlackProps> = (props) => {
+  const {
+    layout,
+    section,
+    pageIndex,
+    bookTitle,
+    imageSlots,
+    imageVersion,
+    isActive,
+    shouldShowImage,
+    shouldShowChapterHeading,
+    chapterHeadingText,
+    onTextChange,
+    pdfExportMode,
+  } = props;
+
+  const pageNum = String(pageIndex).padStart(2, '0');
+
+  if (layout === 'cover') {
+    return (
+      <div className="layout-minblack-cover">
+        <div className="minblack-cover-kicker">
+          {bookTitle || 'Ebook Edition'}
+        </div>
+        <div className="minblack-cover-main">
+          <h1
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="minblack-cover-title"
+          >
+            {section.title}
+          </h1>
+          <div className="minblack-cover-divider" />
+          <p className="minblack-cover-author">
+            By Author
+          </p>
+        </div>
+        <div className="minblack-cover-footer">
+          Minimalism Press
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'editorial') {
+    return (
+      <div className="layout-minblack-opener">
+        <div className="minblack-opener-header">
+          <span>{bookTitle}</span>
+          <span>Chapter {pageNum}</span>
+        </div>
+        
+        <div className="minblack-opener-main">
+          {/* Huge background number */}
+          <div className="minblack-opener-bg-num">
+            {pageNum}
+          </div>
+          
+          <div className="minblack-opener-overlay">
+            <span className="minblack-opener-kicker">
+              Chapter {pageNum}
+            </span>
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="minblack-opener-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          </div>
+        </div>
+
+        <div className="minblack-opener-footer">
+          — {pageNum} —
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'split') {
+    return (
+      <div className="layout-minblack-split">
+        <div className="minblack-split-header">
+          <span>{bookTitle}</span>
+          <span>{chapterHeadingText}</span>
+        </div>
+
+        <div className="minblack-split-main">
+          <div className="minblack-split-left">
+            {shouldShowImage && (
+              <Img
+                slot={imageSlots.primary}
+                alt={chapterHeadingText}
+                className="minblack-split-img"
+                imageVersion={imageVersion}
+                isActive={isActive}
+                pdfExportMode={pdfExportMode}
+              />
+            )}
+          </div>
+          <div className="minblack-split-right">
+            {shouldShowChapterHeading && (
+              <h3
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+                className="minblack-split-title"
+              >
+                {chapterHeadingText}
+              </h3>
+            )}
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+              dangerouslySetInnerHTML={{ __html: section.content }}
+              className="minblack-split-content"
+            />
+          </div>
+        </div>
+
+        <div className="minblack-split-footer">
+          {pageNum}
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'magazine') {
+    return (
+      <div className="layout-minblack-quote">
+        <div className="minblack-quote-header">
+          {bookTitle}
+        </div>
+
+        <div className="minblack-quote-main">
+          <span className="minblack-quote-mark">“</span>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="minblack-quote-content"
+          />
+          <span className="minblack-quote-mark">”</span>
+        </div>
+
+        <div className="minblack-quote-footer">
+          {pageNum}
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'toc') {
+    const tocItems = section.content && section.content.trim() !== ''
+      ? section.content.split(/<br\s*\/?>|<\/?p>/).filter(item => item.replace(/&nbsp;/g, '').trim())
+      : [
+          'Introduction',
+          'First Chapter: Setting the Scene',
+          'Second Chapter: The Climax',
+          'Third Chapter: Conclusion & Takeaways'
+        ];
+
+    return (
+      <div className="layout-minblack-toc">
+        <div className="minblack-toc-header">
+          {bookTitle}
+        </div>
+
+        <div className="minblack-toc-main">
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="minblack-toc-title"
+          >
+            {chapterHeadingText || 'Table of Contents'}
+          </h2>
+
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            className="minblack-toc-list"
+          >
+            {tocItems.map((item, idx) => {
+              const cleanText = item.replace(/<[^>]*>/g, '').trim();
+              if (!cleanText) return null;
+              const num = String(idx + 1).padStart(2, '0');
+              return (
+                <div key={idx} className="minblack-toc-item">
+                  <span className="minblack-toc-num">{num}</span>
+                  <span className="minblack-toc-label">{cleanText}</span>
+                  <div className="minblack-toc-dots" />
+                  <span className="minblack-toc-page">{String(idx * 4 + 5).padStart(2, '0')}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="minblack-toc-footer">
+          {pageNum}
+        </div>
+      </div>
+    );
+  }
+
+  // standard / text layout
+  return (
+    <div className="layout-minblack-text">
+      <div className="minblack-text-header">
+        <span>{bookTitle}</span>
+        <span>{chapterHeadingText}</span>
+      </div>
+
+      <div className="minblack-text-main">
+        <div className="minblack-text-left">
+          {shouldShowChapterHeading && (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="minblack-text-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          )}
+        </div>
+        <div className="minblack-text-right">
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="minblack-text-content"
+          />
+          {shouldShowImage && (
+            <div className="minblack-text-img-frame">
+              <Img
+                slot={imageSlots.primary}
+                alt={chapterHeadingText}
+                className="minblack-text-img"
+                imageVersion={imageVersion}
+                isActive={isActive}
+                pdfExportMode={pdfExportMode}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="minblack-text-footer">
+        {pageNum}
+      </div>
+    </div>
+  );
+};
+

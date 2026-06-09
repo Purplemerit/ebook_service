@@ -69,6 +69,10 @@ interface EbookViewerProps {
   onRedo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+
+  // Page Dimensions
+  dimensions: 'letter' | 'a4' | 'legal';
+  setDimensions: (dims: 'letter' | 'a4' | 'legal') => void;
 }
 
 export const EbookViewer: React.FC<EbookViewerProps> = ({
@@ -113,13 +117,16 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
   onRedo,
   canUndo,
   canRedo,
+
+  // Page Dimensions
+  dimensions,
+  setDimensions,
 }) => {
   const [viewMode, setViewMode] = useState<'single' | 'spread' | 'grid'>('single');
   const [zoom, setZoom] = useState<number>(75);
   const [activeRightSidebarTab, setActiveRightSidebarTab] = useState<'chat' | 'design' | 'details' | 'assets' | 'animate' | null>('chat');
   const [isPagesPanelOpen, setIsPagesPanelOpen] = useState<boolean>(true);
   const [dottedGrid, setDottedGrid] = useState<boolean>(true);
-  const [dimensions, setDimensions] = useState<'letter' | 'a4' | 'legal'>('a4');
   const [highlightOpen, setHighlightOpen] = useState<boolean>(false);
   const [activeHighlightColor, setActiveHighlightColor] = useState<string>('#fef08a');
 
@@ -148,15 +155,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
       ? { w: 612, h: 1008 }
       : { w: 595, h: 842 }; // standard A4
 
-  const handlePrint = () => {
-    if (isLargeBook) {
-      const ok = window.confirm(
-        `This book has ${sections.length} pages. Browser print works best with smaller books. Use Download PDF for the full export. Print current view anyway?`
-      );
-      if (!ok) return;
-    }
-    window.print();
-  };
+
 
   const goToPrev = () => {
     if (activePageIndex > 0) onSelectPage(activePageIndex - 1);
@@ -219,6 +218,8 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
         matchedTheme = 'modern';
       } else if (textLower.includes('noir') || textLower.includes('dark')) {
         matchedTheme = 'noir';
+      } else if (textLower.includes('minimalblack') || textLower.includes('minimal black') || textLower.includes('professional')) {
+        matchedTheme = 'minimalblack';
       }
 
       if (matchedTheme) {
@@ -389,14 +390,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
             </span>
           )}
 
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="px-3 py-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm"
-            title="Print PDF"
-          >
-            <span>Print</span>
-          </button>
+
 
           <button
             type="button"

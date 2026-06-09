@@ -8,7 +8,7 @@ import {
   getExportImageForCapture,
   resolveImageUrl,
 } from '../utils/imageHelper';
-import { ThemeCover, ThemeEditorial } from './ThemeLayout';
+import { ThemeCover, ThemeEditorial, ThemeMinimalBlack } from './ThemeLayout';
 
 interface PageLayoutProps {
   section: EbookSection;
@@ -243,7 +243,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   };
 
   const cycleLayout = () => {
-    const layouts: EbookSection['layout'][] = ['cover', 'split', 'editorial', 'magazine', 'standard'];
+    const layouts: EbookSection['layout'][] = ['cover', 'split', 'editorial', 'magazine', 'standard', 'toc', 'text'];
     const currentIdx = layouts.indexOf(section.layout);
     const nextIdx = (currentIdx + 1) % layouts.length;
     onUpdateSection({
@@ -292,6 +292,26 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   );
 
   const pageBodyContent = useMemo(() => {
+    if (selectedTheme === 'minimalblack') {
+      return (
+        <ThemeMinimalBlack
+          themeId={selectedTheme}
+          layout={section.layout}
+          section={section}
+          pageIndex={pageIndex}
+          bookTitle={bookTitle}
+          imageSlots={imageSlots}
+          imageVersion={imageVersion}
+          isActive={isActive || pdfExportMode}
+          shouldShowImage={shouldShowImage}
+          shouldShowChapterHeading={shouldShowChapterHeading}
+          chapterHeadingText={chapterHeadingText}
+          onTextChange={handleTextChange}
+          pdfExportMode={pdfExportMode}
+        />
+      );
+    }
+
     if (section.layout === 'cover') {
       return (
         <ThemeCover

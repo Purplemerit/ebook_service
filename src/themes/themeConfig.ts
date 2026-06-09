@@ -133,4 +133,15 @@ export const EBOOK_THEMES: ThemeOption[] = [
     fontBody: 'Lora',
     paletteColors: ['#5c0909', '#fdfbf7', '#7a0b0d', '#2b0808'],
   },
+  {
+    id: 'minimalblack',
+    name: 'Minimal Black',
+    description: 'Minimalist editorial — deep black and pure white contrast, elegant serif headlines, clean grid elements, and high-end modern layout structures.',
+    bgColor: '#ffffff',
+    accentColor: '#000000',
+    textColor: '#1a1a1a',
+    fontHeader: 'Playfair Display',
+    fontBody: 'Inter',
+    paletteColors: ['#000000', '#ffffff', '#e5e5e5', '#333333'],
+  },
 ];

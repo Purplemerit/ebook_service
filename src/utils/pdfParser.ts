@@ -50,7 +50,7 @@ export interface EbookSection {
   content: string;
   imagePrompt: string;
   imageUrl: string;
-  layout: 'split' | 'editorial' | 'magazine' | 'cover' | 'standard';
+  layout: 'split' | 'editorial' | 'magazine' | 'cover' | 'standard' | 'toc' | 'text';
   /** Actual book chapter this page belongs to (from PDF headings). */
   chapterTitle?: string;
   /** When false, the large in-page chapter heading is hidden (continuation page). */

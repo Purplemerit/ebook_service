@@ -23,10 +23,9 @@ import type { ThemeId } from './themes/types';
 import { ExportProgressOverlay } from './components/ExportProgressOverlay';
 import {
   estimateExportMinutes,
-  exportStyledEbookPdf,
   preloadExportImages,
-  prepareElementForPdfCapture,
 } from './utils/pdfExport';
+import { exportPrintPdf } from './utils/printPdfExport';
 import { exportFastTextPdf } from './utils/fastPdfExport';
 
 function App() {
@@ -75,6 +74,7 @@ function App() {
   };
 
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>('editorial');
+  const [dimensions, setDimensions] = useState<'letter' | 'a4' | 'legal'>('a4');
 
   // Storing theme overrides per theme
   const [themeOverrides, setThemeOverrides] = useState<Partial<Record<ThemeId, {
@@ -198,14 +198,7 @@ function App() {
     setExportStatus('Preparing images…');
     document.body.classList.add('pdf-exporting');
 
-    let stylesRestored = false;
-    const restoreCaptureStyles = prepareElementForPdfCapture(element);
-    const safeRestoreStyles = () => {
-      if (!stylesRestored) {
-        restoreCaptureStyles();
-        stylesRestored = true;
-      }
-    };
+    // No DOM or style manipulation needed for browser-print PDF export
 
     try {
       await preloadExportImages(sections, bookTitle, selectedTheme, (loaded, total) => {
@@ -218,19 +211,14 @@ function App() {
 
       setExportStatus('');
 
-      await exportStyledEbookPdf({
-        totalPages: sections.length,
-        filename,
-        signal: abort.signal,
+      await exportPrintPdf({
+        sections,
+        bookTitle,
+        selectedTheme,
+        customThemeStyles,
         onProgress: (current, total) => setExportProgress({ current, total }),
-        onRenderPage: (pageIndex) => {
-          flushSync(() => {
-            setPdfExportPageIndex(pageIndex);
-            setActivePageIndex(pageIndex);
-          });
-        },
-        getPageElement: () =>
-          element.querySelector('.ebook-page') as HTMLElement | null,
+        signal: abort.signal,
+        dimensions,
       });
     } catch (err) {
       console.error('PDF generation failed: ', err);
@@ -240,7 +228,6 @@ function App() {
       } else if (sections.length > 100) {
         alert(`Styled PDF generation failed (${message}). Triggering fast text-based PDF fallback since your book is large (${sections.length} pages)...`);
         try {
-          safeRestoreStyles();
           flushSync(() => setPdfExportPageIndex(null));
           document.body.classList.remove('pdf-exporting');
 
@@ -267,7 +254,6 @@ function App() {
     } finally {
       exportAbortRef.current = null;
       flushSync(() => setPdfExportPageIndex(null));
-      safeRestoreStyles();
       document.body.classList.remove('pdf-exporting');
       setIsExporting(false);
       setExportProgress({ current: 0, total: 0 });
@@ -626,6 +612,8 @@ function App() {
           <EbookViewer
             sections={sections}
             bookTitle={bookTitle}
+            dimensions={dimensions}
+            setDimensions={setDimensions}
             selectedTheme={selectedTheme}
             customThemeStyles={customThemeStyles}
             onUpdateSection={handleUpdateSection}

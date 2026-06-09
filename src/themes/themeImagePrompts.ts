@@ -116,6 +116,14 @@ export function getThemeImageSlots(
       `Wide luxury fashion spread, blood-red and warm cream color palette, ${ch}`,
       `Editorial close-up fashion photography, rich textures, deep red color grade, ${ch}`,
     ],
+    minimalblack: [
+      `Minimalist high-fashion black and white editorial photography, stark contrast, clean compositions, ${ch}`,
+      `Stark minimalist black and white architecture photograph, elegant lines, shadow play, ${ch}`,
+      `High-end minimalist aesthetic flatlay, black white grey color palette, book and tea, ${book}`,
+      `Small high-contrast black and white graphic design element, minimal border, ${ch}`,
+      `Wide high-contrast black and white editorial landscape photograph, minimalism, ${ch}`,
+      `Minimalist abstract graphic composition, black and white ink style, high-end look, ${ch}`,
+    ],
   };
 
   return buildSlots(promptSets[themeId], baseSeed);

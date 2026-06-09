@@ -245,6 +245,20 @@ const renderThemePreview = (
           </div>
         </div>
       );
+    case 'minimalblack':
+      return (
+        <div className="celestial-theme-preview" style={{ ...previewStyle, backgroundColor: '#000000', color: '#ffffff', borderColor: '#333333' }}>
+          <div className="mini-layout" style={{ ...fontBodyStyle, justifyContent: 'space-between', padding: '8px 4px 6px', alignItems: 'center', height: '100%' }}>
+            <span style={{ fontSize: '0.4rem', fontWeight: 'bold', letterSpacing: '0.15em', opacity: 0.6 }}>MINIMAL</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+              <h4 style={{ ...fontHeaderStyle, fontSize: '0.72rem', fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#ffffff', lineHeight: 1.1 }}>Book Title</h4>
+              <div style={{ width: '12px', height: '1px', backgroundColor: 'rgba(255,255,255,0.4)' }} />
+              <span style={{ fontSize: '0.42rem', letterSpacing: '0.1em', opacity: 0.8 }}>AUTHOR</span>
+            </div>
+            <span style={{ fontSize: '0.4rem', letterSpacing: '0.1em', opacity: 0.4 }}>EDITION</span>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="celestial-theme-preview" style={previewStyle}>

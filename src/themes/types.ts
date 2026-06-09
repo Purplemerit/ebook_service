@@ -10,7 +10,8 @@ export type ThemeId =
   | 'wellness'
   | 'construct'
   | 'newspaper'
-  | 'bloodred';
+  | 'bloodred'
+  | 'minimalblack';
 
 export interface ThemeOption {
   id: ThemeId;
