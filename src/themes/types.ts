@@ -11,7 +11,10 @@ export type ThemeId =
   | 'construct'
   | 'newspaper'
   | 'bloodred'
-  | 'minimalblack';
+  | 'minimalblack'
+  | 'rose'
+  | 'lavender'
+  | 'bolddark';
 
 export interface ThemeOption {
   id: ThemeId;

@@ -2388,3 +2388,104 @@ body.pdf-exporting #ebook-download-wrapper {
   position: relative;
   flex-shrink: 0 !important;
 }
+
+/* Hide global headers and footers for custom design themes to prevent duplicate headings */
+.theme-minimalblack .ebook-page-header,
+.theme-minimalblack .ebook-page-footer,
+.theme-rose .ebook-page-header,
+.theme-rose .ebook-page-footer,
+.theme-lavender .ebook-page-header,
+.theme-lavender .ebook-page-footer,
+.theme-bolddark .ebook-page-header,
+.theme-bolddark .ebook-page-footer {
+  display: none !important;
+}
+
+/* Force text justification, spacing, auto-hyphenation, and line-height: 1.6 rules on ebook paragraphs/contents */
+.ebook-page:not(.layout-cover) .ebook-page-body p,
+.ebook-page:not(.layout-cover) .ebook-page-body li,
+.ebook-page:not(.layout-cover) .ebook-page-body [contenteditable]:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+.print-page-container:not(.layout-cover) p,
+.print-page-container:not(.layout-cover) li,
+.pdf-export-page:not(.layout-cover) p,
+.pdf-export-page:not(.layout-cover) li,
+/* specific classes for individual themes to ensure backward compatibility and coverage */
+.ebook-page:not(.layout-cover) .ebook-p,
+.ebook-page:not(.layout-cover) .ebook-columns,
+.ebook-page:not(.layout-cover) .wl-lead,
+.ebook-page:not(.layout-cover) .wl-columns,
+.ebook-page:not(.layout-cover) .sp-lead,
+.ebook-page:not(.layout-cover) .sp-columns,
+.ebook-page:not(.layout-cover) .comic-body-text,
+.ebook-page:not(.layout-cover) .comic-body-cols,
+.ebook-page:not(.layout-cover) .sporty-lead,
+.ebook-page:not(.layout-cover) .sporty-columns,
+.ebook-page:not(.layout-cover) .wellness-lead,
+.ebook-page:not(.layout-cover) .wellness-columns,
+.ebook-page:not(.layout-cover) .construct-text,
+.ebook-page:not(.layout-cover) .construct-columns,
+.ebook-page:not(.layout-cover) .nyt-deck,
+.ebook-page:not(.layout-cover) .nyt-columns,
+.ebook-page:not(.layout-cover) .nyt-sidebar-text,
+.ebook-page:not(.layout-cover) .bloodred-body-lead,
+.ebook-page:not(.layout-cover) .bloodred-body-cols,
+.ebook-page:not(.layout-cover) .warm-lead,
+.ebook-page:not(.layout-cover) .warm-body-columns,
+.ebook-page:not(.layout-cover) .minblack-split-content,
+.ebook-page:not(.layout-cover) .minblack-quote-content,
+.ebook-page:not(.layout-cover) .minblack-text-content,
+.ebook-page:not(.layout-cover) .rose-checklist-text,
+.ebook-page:not(.layout-cover) .rose-step-text,
+.ebook-page:not(.layout-cover) .rose-quote-text,
+.ebook-page:not(.layout-cover) .rose-split-content,
+.ebook-page:not(.layout-cover) .rose-text-content,
+.ebook-page:not(.layout-cover) .lavender-opener-desc,
+.ebook-page:not(.layout-cover) .lavender-split-lead,
+.ebook-page:not(.layout-cover) .lavender-split-body,
+.ebook-page:not(.layout-cover) .lavender-funnel-text,
+.ebook-page:not(.layout-cover) .lavender-list-text,
+.ebook-page:not(.layout-cover) .lavender-text-content,
+.ebook-page:not(.layout-cover) .bolddark-quote-content,
+.ebook-page:not(.layout-cover) .bolddark-step-text,
+.ebook-page:not(.layout-cover) .bolddark-checklist-text,
+.ebook-page:not(.layout-cover) .bolddark-service-name,
+.ebook-page:not(.layout-cover) .bolddark-cta-desc,
+.ebook-page:not(.layout-cover) .eb-textbox,
+.ebook-page:not(.layout-cover) .eb-comment,
+.ebook-page:not(.layout-cover) .rose-checklist-item,
+.ebook-page:not(.layout-cover) .bolddark-checklist-item,
+.ebook-page:not(.layout-cover) .warm-checklist li {
+  text-align: justify !important;
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  hyphens: auto !important;
+  -webkit-hyphens: auto !important;
+  -moz-hyphens: auto !important;
+  -ms-hyphens: auto !important;
+  line-height: 1.6 !important;
+}
+
+/* Ensure headings are explicitly left-aligned inside page layouts (except on cover pages) */
+.ebook-page:not(.layout-cover) h1,
+.ebook-page:not(.layout-cover) h2,
+.ebook-page:not(.layout-cover) h3,
+.ebook-page:not(.layout-cover) h4,
+.ebook-page:not(.layout-cover) h5,
+.ebook-page:not(.layout-cover) h6,
+.ebook-page:not(.layout-cover) .ebook-h1,
+.print-page-container:not(.layout-cover) h1,
+.print-page-container:not(.layout-cover) h2,
+.print-page-container:not(.layout-cover) h3,
+.print-page-container:not(.layout-cover) h4,
+.print-page-container:not(.layout-cover) h5,
+.print-page-container:not(.layout-cover) h6,
+.print-page-container:not(.layout-cover) .ebook-h1,
+.pdf-export-page:not(.layout-cover) h1,
+.pdf-export-page:not(.layout-cover) h2,
+.pdf-export-page:not(.layout-cover) h3,
+.pdf-export-page:not(.layout-cover) h4,
+.pdf-export-page:not(.layout-cover) h5,
+.pdf-export-page:not(.layout-cover) h6,
+.pdf-export-page:not(.layout-cover) .ebook-h1 {
+  text-align: left !important;
+}

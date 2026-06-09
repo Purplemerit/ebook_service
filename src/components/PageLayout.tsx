@@ -8,7 +8,7 @@ import {
   getExportImageForCapture,
   resolveImageUrl,
 } from '../utils/imageHelper';
-import { ThemeCover, ThemeEditorial, ThemeMinimalBlack } from './ThemeLayout';
+import { ThemeCover, ThemeEditorial, ThemeMinimalBlack, ThemeRose, ThemeLavender, ThemeBoldDark } from './ThemeLayout';
 
 interface PageLayoutProps {
   section: EbookSection;
@@ -295,6 +295,66 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (selectedTheme === 'minimalblack') {
       return (
         <ThemeMinimalBlack
+          themeId={selectedTheme}
+          layout={section.layout}
+          section={section}
+          pageIndex={pageIndex}
+          bookTitle={bookTitle}
+          imageSlots={imageSlots}
+          imageVersion={imageVersion}
+          isActive={isActive || pdfExportMode}
+          shouldShowImage={shouldShowImage}
+          shouldShowChapterHeading={shouldShowChapterHeading}
+          chapterHeadingText={chapterHeadingText}
+          onTextChange={handleTextChange}
+          pdfExportMode={pdfExportMode}
+        />
+      );
+    }
+
+    if (selectedTheme === 'rose') {
+      return (
+        <ThemeRose
+          themeId={selectedTheme}
+          layout={section.layout}
+          section={section}
+          pageIndex={pageIndex}
+          bookTitle={bookTitle}
+          imageSlots={imageSlots}
+          imageVersion={imageVersion}
+          isActive={isActive || pdfExportMode}
+          shouldShowImage={shouldShowImage}
+          shouldShowChapterHeading={shouldShowChapterHeading}
+          chapterHeadingText={chapterHeadingText}
+          onTextChange={handleTextChange}
+          pdfExportMode={pdfExportMode}
+        />
+      );
+    }
+
+    if (selectedTheme === 'lavender') {
+      return (
+        <ThemeLavender
+          themeId={selectedTheme}
+          layout={section.layout}
+          section={section}
+          pageIndex={pageIndex}
+          bookTitle={bookTitle}
+          imageSlots={imageSlots}
+          imageVersion={imageVersion}
+          isActive={isActive || pdfExportMode}
+          shouldShowImage={shouldShowImage}
+          shouldShowChapterHeading={shouldShowChapterHeading}
+          chapterHeadingText={chapterHeadingText}
+          onTextChange={handleTextChange}
+          pdfExportMode={pdfExportMode}
+        />
+      );
+    }
+
+    if (selectedTheme === 'bolddark') {
+      return (
+        <ThemeBoldDark
           themeId={selectedTheme}
           layout={section.layout}
           section={section}

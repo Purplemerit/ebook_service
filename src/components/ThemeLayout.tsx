@@ -1108,3 +1108,730 @@ export const ThemeMinimalBlack: React.FC<ThemeMinimalBlackProps> = (props) => {
   );
 };
 
+
+// ── 14. ROSE THEME LAYOUTS ──────────────────────────────────
+interface ThemeRoseProps extends ThemeLayoutProps {
+  layout: EbookSection['layout'];
+}
+
+export const ThemeRose: React.FC<ThemeRoseProps> = (props) => {
+  const {
+    layout,
+    section,
+    pageIndex,
+    bookTitle,
+    imageSlots,
+    imageVersion,
+    isActive,
+    shouldShowImage,
+    shouldShowChapterHeading,
+    chapterHeadingText,
+    onTextChange,
+    pdfExportMode,
+  } = props;
+
+  const pageNum = String(pageIndex).padStart(2, '0');
+  const items = section.content && section.content.trim() !== ''
+    ? section.content.split(/<br\s*\/?>|<\/?p>/).map(t => t.replace(/<[^>]*>/g, '').trim()).filter(Boolean)
+    : [
+        'Eat well for your body',
+        'Move well for your health',
+        'Make the best lifestyle choices',
+        'Change your mindset around aging',
+        'Prioritize self-care and sleep'
+      ];
+
+  if (layout === 'cover') {
+    return (
+      <div className="layout-rose-cover">
+        <div className="rose-cover-floral-top">
+          <svg viewBox="0 0 100 30" className="rose-floral-svg" style={{ width: '80px', height: '30px', stroke: 'var(--eb-accent, #8a2846)', fill: 'none' }}>
+            <path d="M10,15 C30,5 70,5 90,15 C70,25 30,25 10,15" strokeWidth="0.5" strokeDasharray="1 1" />
+            <circle cx="50" cy="15" r="2" fill="var(--eb-accent, #8a2846)" />
+          </svg>
+        </div>
+        <div className="rose-cover-center">
+          <div className="rose-cover-kicker">{bookTitle || 'Ebook Edition'}</div>
+          <h1
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="rose-cover-title"
+          >
+            {section.title}
+          </h1>
+          <div className="rose-cover-divider" />
+          <p className="rose-cover-author">By Author Name</p>
+        </div>
+        <div className="rose-cover-floral-bottom">
+          <svg viewBox="0 0 100 10" className="rose-floral-svg-mini" style={{ width: '40px', height: '10px', stroke: 'var(--eb-accent, #8a2846)' }}>
+            <line x1="10" y1="5" x2="90" y2="5" strokeWidth="0.5" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'editorial') {
+    // Checklist Layout
+    return (
+      <div className="layout-rose-checklist">
+        <div className="rose-checklist-header">
+          <span>{bookTitle}</span>
+          <span>Checklist</span>
+        </div>
+        <div className="rose-checklist-main">
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="rose-checklist-title"
+          >
+            {chapterHeadingText}
+          </h2>
+          <div className="rose-checklist-list">
+            {items.map((item, idx) => (
+              <div key={idx} className="rose-checklist-item">
+                <div className="rose-checklist-checkbox">
+                  <svg viewBox="0 0 24 24" className="rose-check-icon" style={{ width: '12px', height: '12px', stroke: 'currentColor', strokeWidth: '3', fill: 'none' }}>
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <span className="rose-checklist-text">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rose-checklist-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'toc') {
+    // Step-by-step layout
+    return (
+      <div className="layout-rose-steps">
+        <div className="rose-steps-header">{bookTitle}</div>
+        <div className="rose-steps-main">
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="rose-steps-title"
+          >
+            {chapterHeadingText}
+          </h2>
+          <div className="rose-steps-grid">
+            {items.slice(0, 5).map((item, idx) => (
+              <div key={idx} className="rose-step-card">
+                <div className="rose-step-num">0{idx + 1}</div>
+                <div className="rose-step-content">
+                  <div className="rose-step-label">Step {idx + 1}</div>
+                  <div className="rose-step-text">{item}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rose-steps-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'magazine') {
+    // Quote with floral decoration
+    return (
+      <div className="layout-rose-quote">
+        <div className="rose-quote-header">{bookTitle}</div>
+        <div className="rose-quote-container">
+          <div className="rose-quote-floral-decor">✿</div>
+          <div className="rose-quote-mark">“</div>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="rose-quote-text"
+          />
+          <div className="rose-quote-mark">”</div>
+          <div className="rose-quote-floral-decor">✿</div>
+        </div>
+        <div className="rose-quote-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'split') {
+    // Two-column content layout with image
+    return (
+      <div className="layout-rose-split">
+        <div className="rose-split-header">
+          <span>{bookTitle}</span>
+          <span>{chapterHeadingText}</span>
+        </div>
+        <div className="rose-split-main">
+          <div className="rose-split-left">
+            {shouldShowImage && (
+              <div className="rose-split-img-frame">
+                <Img
+                  slot={imageSlots.primary}
+                  alt={chapterHeadingText}
+                  className="rose-split-img"
+                  imageVersion={imageVersion}
+                  isActive={isActive}
+                  pdfExportMode={pdfExportMode}
+                />
+              </div>
+            )}
+          </div>
+          <div className="rose-split-right">
+            {shouldShowChapterHeading && (
+              <h3
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+                className="rose-split-title"
+              >
+                {chapterHeadingText}
+              </h3>
+            )}
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+              dangerouslySetInnerHTML={{ __html: section.content }}
+              className="rose-split-content"
+            />
+          </div>
+        </div>
+        <div className="rose-split-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  // standard / text layout - Empowering Affirmations
+  return (
+    <div className="layout-rose-text">
+      <div className="rose-text-header">
+        <span>{bookTitle}</span>
+        <span>{chapterHeadingText}</span>
+      </div>
+      <div className="rose-text-main">
+        <div className="rose-text-frame">
+          {shouldShowChapterHeading && (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="rose-text-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          )}
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="rose-text-content"
+          />
+        </div>
+      </div>
+      <div className="rose-text-footer">{pageNum}</div>
+    </div>
+  );
+};
+
+
+// ── 15. LAVENDER THEME LAYOUTS ──────────────────────────────
+interface ThemeLavenderProps extends ThemeLayoutProps {
+  layout: EbookSection['layout'];
+}
+
+export const ThemeLavender: React.FC<ThemeLavenderProps> = (props) => {
+  const {
+    layout,
+    section,
+    pageIndex,
+    bookTitle,
+    imageSlots,
+    imageVersion,
+    isActive,
+    shouldShowImage,
+    shouldShowChapterHeading,
+    chapterHeadingText,
+    onTextChange,
+    pdfExportMode,
+  } = props;
+
+  const pageNum = String(pageIndex).padStart(2, '0');
+  const items = section.content && section.content.trim() !== ''
+    ? section.content.split(/<br\s*\/?>|<\/?p>/).map(t => t.replace(/<[^>]*>/g, '').trim()).filter(Boolean)
+    : [
+        'Introduction to the Lavender Method',
+        'Aesthetic Lavender Fields Design',
+        'Rotated Chapter Opener Grid Styling',
+        'Serene Two-Column Spreads & Dropcaps',
+        'Interactive Diagram and Step funnels'
+      ];
+
+  const header = (
+    <div className="lavender-header">
+      <span>{bookTitle || 'E-Book'}</span>
+      <span>{chapterHeadingText}</span>
+    </div>
+  );
+
+  const footer = (
+    <div className="lavender-footer">
+      <span>Artistic E-Book Series</span>
+      <span>{pageNum}</span>
+    </div>
+  );
+
+  if (layout === 'cover') {
+    // Top-half image / bottom-half lavender text block cover
+    return (
+      <div className="layout-lavender-cover">
+        <div className="lavender-cover-top">
+          {shouldShowImage ? (
+            <Img
+              slot={imageSlots.primary}
+              alt={bookTitle}
+              className="lavender-cover-bg-img"
+              imageVersion={imageVersion}
+              isActive={isActive}
+              pdfExportMode={pdfExportMode}
+            />
+          ) : (
+            <div className="lavender-cover-top-placeholder" />
+          )}
+        </div>
+        <div className="lavender-cover-bottom">
+          <div className="lavender-cover-kicker">{bookTitle || 'Ebook Collection'}</div>
+          <h1
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="lavender-cover-title"
+          >
+            {section.title}
+          </h1>
+          <svg className="lavender-cover-decor" viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <line x1="5" y1="10" x2="42" y2="10" />
+            <polygon points="50,6 54,10 50,14 46,10" fill="currentColor" />
+            <line x1="58" y1="10" x2="95" y2="10" />
+          </svg>
+          <p className="lavender-cover-author">By Author Name</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'editorial') {
+    // Chapter opener layout (sidebar removed, full width with unified header/footer)
+    return (
+      <div className="layout-lavender-opener">
+        {header}
+        <div className="lavender-opener-main">
+          <div className="lavender-opener-circle">{pageNum}</div>
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="lavender-opener-title"
+          >
+            {chapterHeadingText}
+          </h2>
+          <div className="lavender-opener-divider" />
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="lavender-opener-desc"
+          />
+        </div>
+        {footer}
+      </div>
+    );
+  }
+
+  if (layout === 'split') {
+    // Two-column magazine layout (dropcap removed, 40% width image)
+    const splitText = splitContent(section.content);
+    return (
+      <div className="layout-lavender-split">
+        {header}
+        <div className="lavender-split-main">
+          <div className="lavender-split-columns">
+            <div className="lavender-split-left-col">
+              {shouldShowChapterHeading && (
+                <h2
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+                  className="lavender-split-title"
+                >
+                  {chapterHeadingText}
+                </h2>
+              )}
+              {splitText.lead && (
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+                  className="lavender-split-lead"
+                  dangerouslySetInnerHTML={{ __html: splitText.lead }}
+                />
+              )}
+              {splitText.body && (
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+                  dangerouslySetInnerHTML={{ __html: splitText.body }}
+                  className="lavender-split-body"
+                />
+              )}
+            </div>
+            <div className="lavender-split-right-col">
+              {shouldShowImage && (
+                <div className="lavender-split-img-container">
+                  <Img
+                    slot={imageSlots.primary}
+                    alt={chapterHeadingText}
+                    className="lavender-split-img"
+                    imageVersion={imageVersion}
+                    isActive={isActive}
+                    pdfExportMode={pdfExportMode}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {footer}
+      </div>
+    );
+  }
+
+  if (layout === 'magazine') {
+    // Funnel Chart Layout
+    return (
+      <div className="layout-lavender-funnel">
+        {header}
+        <div className="lavender-funnel-main">
+          <div className="lavender-funnel-grid">
+            <div className="lavender-funnel-visual">
+              <div className="lavender-funnel-tier tier-1"><span>01. ATTRACTION</span></div>
+              <div className="lavender-funnel-tier tier-2"><span>02. INTEREST</span></div>
+              <div className="lavender-funnel-tier tier-3"><span>03. DECISION</span></div>
+              <div className="lavender-funnel-tier tier-4"><span>04. ACTION</span></div>
+            </div>
+            <div className="lavender-funnel-content-block">
+              {shouldShowChapterHeading && (
+                <h2
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+                  className="lavender-funnel-title"
+                >
+                  {chapterHeadingText || 'Funnel Strategy'}
+                </h2>
+              )}
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+                dangerouslySetInnerHTML={{ __html: section.content }}
+                className="lavender-funnel-text"
+              />
+            </div>
+          </div>
+        </div>
+        {footer}
+      </div>
+    );
+  }
+
+  if (layout === 'toc') {
+    // Numbered list layout
+    return (
+      <div className="layout-lavender-list">
+        {header}
+        <div className="lavender-list-main">
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="lavender-list-title"
+          >
+            {chapterHeadingText}
+          </h2>
+          <div className="lavender-list-items">
+            {items.map((item, idx) => (
+              <div key={idx} className="lavender-list-item">
+                <div className="lavender-list-num">{String(idx + 1).padStart(2, '0')}</div>
+                <div className="lavender-list-text">{item}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {footer}
+      </div>
+    );
+  }
+
+  // standard / text layout (borders removed, consistent margins/padding)
+  return (
+    <div className="layout-lavender-text">
+      {header}
+      <div className="lavender-text-main">
+        {shouldShowChapterHeading && (
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="lavender-text-title"
+          >
+            {chapterHeadingText}
+          </h2>
+        )}
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+          dangerouslySetInnerHTML={{ __html: section.content }}
+          className="lavender-text-content"
+        />
+      </div>
+      {footer}
+    </div>
+  );
+};
+
+
+// ── 16. BOLD DARK THEME LAYOUTS ─────────────────────────────
+interface ThemeBoldDarkProps extends ThemeLayoutProps {
+  layout: EbookSection['layout'];
+}
+
+export const ThemeBoldDark: React.FC<ThemeBoldDarkProps> = (props) => {
+  const {
+    layout,
+    section,
+    pageIndex,
+    bookTitle,
+    imageSlots,
+    imageVersion,
+    isActive,
+    shouldShowImage,
+    shouldShowChapterHeading,
+    chapterHeadingText,
+    onTextChange,
+    pdfExportMode,
+  } = props;
+
+  const pageNum = String(pageIndex).padStart(2, '0');
+  const items = section.content && section.content.trim() !== ''
+    ? section.content.split(/<br\s*\/?>|<\/?p>/).map(t => t.replace(/<[^>]*>/g, '').trim()).filter(Boolean)
+    : [
+        'Strategic Consultation: $150',
+        'Layout Redesign Package: $499',
+        'High-End Typography Audit: $250',
+        'Custom Design Services: $999',
+        'Full PDF Branding Guidelines: $599'
+      ];
+
+  if (layout === 'cover') {
+    // Dark cover with 2x2 grid of B&W images
+    return (
+      <div className="layout-bolddark-cover">
+        {shouldShowImage && (
+          <div className="bolddark-cover-grid">
+            <div className="bolddark-grid-item">
+              <Img slot={imageSlots.primary} alt="g1" className="bolddark-grid-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+            </div>
+            <div className="bolddark-grid-item">
+              <Img slot={imageSlots.extras[0] || imageSlots.primary} alt="g2" className="bolddark-grid-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+            </div>
+            <div className="bolddark-grid-item">
+              <Img slot={imageSlots.extras[1] || imageSlots.primary} alt="g3" className="bolddark-grid-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+            </div>
+            <div className="bolddark-grid-item">
+              <Img slot={imageSlots.extras[2] || imageSlots.primary} alt="g4" className="bolddark-grid-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+            </div>
+          </div>
+        )}
+        <div className="bolddark-cover-card">
+          <div className="bolddark-cover-kicker">{bookTitle || 'LTD EDITION'}</div>
+          <h1
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="bolddark-cover-title"
+          >
+            {section.title}
+          </h1>
+          <div className="bolddark-cover-line" />
+          <p className="bolddark-cover-author">By Author Name</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (layout === 'editorial') {
+    // Call to Action Page
+    return (
+      <div className="layout-bolddark-cta">
+        <div className="bolddark-cta-header">{bookTitle}</div>
+        <div className="bolddark-cta-main">
+          {shouldShowChapterHeading && (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="bolddark-cta-title"
+            >
+              {chapterHeadingText || 'Ready to Start?'}
+            </h2>
+          )}
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="bolddark-cta-desc"
+          />
+          <div className="bolddark-cta-button">
+            GET STARTED NOW
+          </div>
+        </div>
+        <div className="bolddark-cta-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'split') {
+    // Services / pricing grid layout
+    return (
+      <div className="layout-bolddark-services">
+        <div className="bolddark-services-header">
+          <span>{bookTitle}</span>
+          <span>Services & Pricing</span>
+        </div>
+        <div className="bolddark-services-main">
+          {shouldShowChapterHeading && (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="bolddark-services-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          )}
+          <div className="bolddark-services-list">
+            {items.map((item, idx) => {
+              const parts = item.split(/[:\-–]/);
+              const name = parts[0] || 'Service Option';
+              const price = parts[1] || `$${(idx + 1) * 99}`;
+              return (
+                <div key={idx} className="bolddark-service-row">
+                  <span className="bolddark-service-name">{name.trim()}</span>
+                  <div className="bolddark-service-dots" />
+                  <span className="bolddark-service-price">{price.trim()}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="bolddark-services-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'magazine') {
+    // Quote page with large quotation mark
+    return (
+      <div className="layout-bolddark-quote">
+        <div className="bolddark-quote-header">{bookTitle}</div>
+        <div className="bolddark-quote-main">
+          <span className="bolddark-quote-mark">“</span>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('content', e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: section.content }}
+            className="bolddark-quote-content"
+          />
+        </div>
+        <div className="bolddark-quote-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  if (layout === 'toc') {
+    // Three-column numbered layout
+    return (
+      <div className="layout-bolddark-steps">
+        <div className="bolddark-steps-header">{bookTitle}</div>
+        <div className="bolddark-steps-main">
+          {shouldShowChapterHeading && (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="bolddark-steps-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          )}
+          <div className="bolddark-steps-grid">
+            {items.slice(0, 3).map((item, idx) => (
+              <div key={idx} className="bolddark-step-col">
+                <div className="bolddark-step-num">0{idx + 1}</div>
+                <div className="bolddark-step-divider" />
+                <div className="bolddark-step-text">{item}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="bolddark-steps-footer">{pageNum}</div>
+      </div>
+    );
+  }
+
+  // standard / text layout - Checklist Page
+  return (
+    <div className="layout-bolddark-checklist">
+      <div className="bolddark-checklist-header">
+        <span>{bookTitle}</span>
+        <span>Checklist</span>
+      </div>
+      <div className="bolddark-checklist-main">
+        {shouldShowChapterHeading && (
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+            className="bolddark-checklist-title"
+          >
+            {chapterHeadingText}
+          </h2>
+        )}
+        <div className="bolddark-checklist-list">
+          {items.map((item, idx) => (
+            <div key={idx} className="bolddark-checklist-item">
+              <div className="bolddark-checklist-box" />
+              <span className="bolddark-checklist-text">{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bolddark-checklist-footer">{pageNum}</div>
+    </div>
+  );
+};
+

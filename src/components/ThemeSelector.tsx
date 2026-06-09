@@ -259,6 +259,36 @@ const renderThemePreview = (
           </div>
         </div>
       );
+    case 'rose':
+      return (
+        <div className="celestial-theme-preview" style={{ ...previewStyle, backgroundColor: '#fef9fa', color: '#2e1018', borderColor: '#f3d2c1' }}>
+          <div className="mini-layout" style={{ ...fontBodyStyle, justifyContent: 'space-between', padding: '8px 4px 6px', alignItems: 'center', height: '100%' }}>
+            <span style={{ fontSize: '0.42rem', fontWeight: 'bold', color: 'var(--theme-accent)', opacity: 0.8 }}>✿ ROSE ✿</span>
+            <h4 style={{ ...fontHeaderStyle, fontSize: '0.8rem', fontWeight: 'bold', margin: '2px 0', textAlign: 'center', lineHeight: 1.1 }}>Feminine</h4>
+            <p style={{ ...fontBodyStyle, fontSize: '0.45rem', opacity: 0.85, textAlign: 'center', lineHeight: 1.25 }}>Burgundy accents, script fonts, and floral graphics.</p>
+          </div>
+        </div>
+      );
+    case 'lavender':
+      return (
+        <div className="celestial-theme-preview" style={{ ...previewStyle, backgroundColor: '#f3f0f7', color: '#1f1633', borderColor: '#b39ddb' }}>
+          <div className="mini-layout" style={{ ...fontBodyStyle, justifyContent: 'space-between', padding: '8px 4px 6px', alignItems: 'center', height: '100%' }}>
+            <span style={{ fontSize: '0.4rem', fontWeight: 'bold', letterSpacing: '0.1em', opacity: 0.6 }}>LAVENDER</span>
+            <h4 style={{ ...fontHeaderStyle, fontSize: '0.82rem', fontWeight: 'bold', margin: '2px 0', textAlign: 'center', color: 'var(--theme-accent)', lineHeight: 1.1 }}>Serene</h4>
+            <p style={{ ...fontBodyStyle, fontSize: '0.45rem', opacity: 0.85, textAlign: 'center', lineHeight: 1.25 }}>Elegant serif headings, diagrams, and soft purple spreads.</p>
+          </div>
+        </div>
+      );
+    case 'bolddark':
+      return (
+        <div className="celestial-theme-preview" style={{ ...previewStyle, backgroundColor: '#000000', color: '#ffffff', borderColor: '#262626' }}>
+          <div className="mini-layout" style={{ ...fontBodyStyle, justifyContent: 'space-between', padding: '8px 4px 6px', alignItems: 'center', height: '100%' }}>
+            <span style={{ fontSize: '0.42rem', fontWeight: 'bold', letterSpacing: '0.15em' }}>GRID</span>
+            <h4 style={{ ...fontHeaderStyle, fontSize: '0.82rem', fontWeight: 'bold', margin: '2px 0', textAlign: 'center', color: '#ffffff', lineHeight: 1.1 }}>Bold Dark</h4>
+            <p style={{ ...fontBodyStyle, fontSize: '0.45rem', opacity: 0.8, textAlign: 'center', lineHeight: 1.25 }}>Pure black theme, sans-serif titles, and pricing tables.</p>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="celestial-theme-preview" style={previewStyle}>

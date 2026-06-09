@@ -220,6 +220,12 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
         matchedTheme = 'noir';
       } else if (textLower.includes('minimalblack') || textLower.includes('minimal black') || textLower.includes('professional')) {
         matchedTheme = 'minimalblack';
+      } else if (textLower.includes('rose') || textLower.includes('pink') || textLower.includes('mauve')) {
+        matchedTheme = 'rose';
+      } else if (textLower.includes('lavender') || textLower.includes('purple')) {
+        matchedTheme = 'lavender';
+      } else if (textLower.includes('bolddark') || textLower.includes('bold dark') || textLower.includes('black grid')) {
+        matchedTheme = 'bolddark';
       }
 
       if (matchedTheme) {

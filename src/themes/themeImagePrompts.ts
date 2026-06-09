@@ -124,6 +124,30 @@ export function getThemeImageSlots(
       `Wide high-contrast black and white editorial landscape photograph, minimalism, ${ch}`,
       `Minimalist abstract graphic composition, black and white ink style, high-end look, ${ch}`,
     ],
+    rose: [
+      `Beautiful elegant pink rose watercolor floral frame, ${ch}, soft feminine background, pastel burgundy palette`,
+      `Vertical rose bouquet photography, lifestyle floral, soft pastel cream mauve background, ${ch}`,
+      `Feminine organic flatlay with notebook, rose petals and leaves, ${book}`,
+      `Decorative line art floral drawing, soft pink blush background, minimal, ${ch}`,
+      `Wide elegant rose garden editorial spread, soft focus floral photography, ${ch}`,
+      `Watercolor flower pattern texture, soft mauve pink, aesthetic, ${ch}`,
+    ],
+    lavender: [
+      `Beautiful purple lavender fields lifestyle photograph, ${ch}, clean serene lavender color palette, editorial`,
+      `Serene lavender watercolor vertical border, soft purple aesthetic, lavender flower illustration, ${ch}`,
+      `Minimalist lavender-scented wellness setup, lavender bundle and candle on white, ${book}`,
+      `Rotated chapter section label graphic, lavender color gradient, modern layout, ${ch}`,
+      `Wide lavender fields landscape, soft focus travel/wellness magazine style, ${ch}`,
+      `Lavender botanical illustration, watercolor purple wash background, elegant, ${ch}`,
+    ],
+    bolddark: [
+      `Minimalist bold black and white architecture grid photography, strong contrast, dark grid style, ${ch}`,
+      `Stark modern abstract photography, high-contrast shadows, pure black background, white lines, ${ch}`,
+      `Bold dark corporate lifestyle flatlay, black desk workspace with coffee cup, ${book}`,
+      `Clean geometric minimalist B&W outline pattern, stark contrast background, ${ch}`,
+      `Wide high-contrast dark urban architectural landscape, white neon lines, ${ch}`,
+      `Modern high-contrast B&W typographic graphic, abstract dark style, ${ch}`,
+    ],
   };
 
   return buildSlots(promptSets[themeId], baseSeed);
