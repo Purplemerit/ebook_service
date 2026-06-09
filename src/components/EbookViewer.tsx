@@ -637,9 +637,10 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
         )}
 
         {/* 3.2 CENTER WORKSPACE CANVAS */}
-        <main className={`flex-1 overflow-auto p-12 flex flex-col justify-start items-center relative ${dottedGrid ? 'canvas-grid-dots' : ''}`}>
+        <main className={`flex-1 overflow-auto p-12 flex flex-col justify-start items-center relative ebook-workspace-canvas ${dottedGrid ? 'canvas-grid-dots' : ''}`}>
           
           <div
+            id="ebook-print-area"
             className={`print-container theme-${selectedTheme} ${
               viewMode === 'spread'
                 ? 'grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1240px]'

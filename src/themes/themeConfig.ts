@@ -122,4 +122,15 @@ export const EBOOK_THEMES: ThemeOption[] = [
     fontBody: 'Playfair Display',
     paletteColors: ['#0d0e12', '#1e202b', '#d4af37', '#e2e8f0'],
   },
+  {
+    id: 'bloodred',
+    name: 'Scarlet Editorial',
+    description: 'High-end luxury editorial style — crimson accents, large translucent chapter numbers, and double column layouts.',
+    bgColor: '#fdfbf7',
+    accentColor: '#7a0b0d',
+    textColor: '#2b0808',
+    fontHeader: 'Playfair Display',
+    fontBody: 'Lora',
+    paletteColors: ['#5c0909', '#fdfbf7', '#7a0b0d', '#2b0808'],
+  },
 ];

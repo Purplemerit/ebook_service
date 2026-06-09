@@ -221,7 +221,7 @@ textarea {
 }
 
 /* Background colors */
-.bg-slate-900 { background-color: var(--bg-card) !important; }
+.bg-slate-900 { background-color: var(--text-primary) !important; }
 .bg-slate-950 { background-color: var(--bg-app) !important; }
 .bg-slate-950\/60 { background-color: rgba(241, 245, 249, 0.6) !important; }
 .bg-slate-950\/40 { background-color: rgba(241, 245, 249, 0.4) !important; }
@@ -355,6 +355,8 @@ textarea {
 .z-40 { z-index: 40 !important; }
 .z-50 { z-index: 50 !important; }
 .overflow-hidden { overflow: hidden !important; }
+.overflow-auto { overflow: auto !important; }
+.overflow-x-auto { overflow-x: auto !important; }
 .overflow-y-auto { overflow-y: auto !important; }
 .select-none { user-select: none; }
 .hidden { display: none !important; }
@@ -1435,6 +1437,28 @@ body.pdf-exporting #ebook-download-wrapper {
 /* Adjust zoom layouts scroll spacing */
 .print-container {
   transition: gap 0.2s ease, max-width 0.2s ease;
+}
+
+/* Custom Scrollbar for Workspace Canvas */
+.ebook-workspace-canvas::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+.ebook-workspace-canvas::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+}
+.ebook-workspace-canvas::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.35); /* semi-transparent primary purple */
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 6px;
+  transition: background var(--transition-fast);
+}
+.ebook-workspace-canvas::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.65); /* darker primary purple */
+  border: 3px solid transparent;
+  background-clip: padding-box;
 }
 
 

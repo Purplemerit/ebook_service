@@ -232,6 +232,19 @@ const renderThemePreview = (
           </div>
         </div>
       );
+    case 'bloodred':
+      return (
+        <div className="celestial-theme-preview" style={previewStyle}>
+          <div className="mini-layout" style={fontBodyStyle}>
+            <div className="mini-bloodred-header">
+              <span className="mini-bloodred-num">01</span>
+              <span className="mini-bloodred-label">CH</span>
+            </div>
+            <h4 style={{ ...fontHeaderStyle, fontSize: '0.75rem', fontWeight: 'bold', margin: '4px 0 2px', lineHeight: 1.1, color: theme.accentColor }}>Scarlet</h4>
+            <p style={{ ...fontBodyStyle, fontSize: '0.46rem', opacity: 0.85, lineHeight: 1.2 }}>Crimson headers, large chapter digits, serif spreads.</p>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="celestial-theme-preview" style={previewStyle}>
@@ -259,9 +272,14 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   activePageIndex = 0,
   bookTitle = '',
 }) => {
-  const currentSection = sections && sections[activePageIndex];
+  // Show the fourth page of the PDF (index 3) in the theme preview if available,
+  // otherwise fallback to the last page (respecting activePageIndex if within range).
+  const previewIndex = sections && sections.length >= 4
+    ? 3
+    : (sections && sections.length > 0 ? Math.min(activePageIndex, sections.length - 1) : 0);
+  const currentSection = sections && sections[previewIndex];
   const totalPages = sections ? sections.length : 1;
-  const pageIndex = activePageIndex + 1;
+  const pageIndex = previewIndex + 1;
 
   return (
     <div className="celestial-theme-grid">

@@ -413,3 +413,212 @@
   .celestial-theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* ── 12. BLOOD RED THEME ── */
+.theme-bloodred {
+  --eb-bg: #fdfbf7;
+  --eb-text: #2b0808;
+  --eb-accent: #7a0b0d;
+  --eb-accent-light: rgba(122, 11, 13, 0.08);
+  --eb-border: rgba(122, 11, 13, 0.15);
+  --eb-font-header: 'Playfair Display', serif;
+  --eb-font-body: 'Lora', serif;
+  --eb-img-radius: 2px;
+  --eb-letter-spacing: 0.01em;
+  --eb-line-height: 1.6;
+}
+.theme-bloodred .ebook-page {
+  background-color: var(--eb-bg);
+  color: var(--eb-text);
+  font-family: var(--eb-font-body);
+}
+
+.theme-bloodred.layout-cover {
+  background-color: #5c0909 !important;
+  color: #ffffff !important;
+  --eb-text: #ffffff;
+  --eb-border: rgba(255, 255, 255, 0.2);
+}
+
+.layout-bloodred-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+}
+.bloodred-cover-chapter-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.bloodred-cover-num {
+  font-size: 8rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.18);
+  line-height: 1;
+  font-family: var(--eb-font-header);
+}
+.bloodred-cover-label {
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  writing-mode: vertical-lr;
+  text-transform: uppercase;
+  font-family: var(--eb-font-header);
+}
+.bloodred-cover-title {
+  font-family: var(--eb-font-header);
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+.layout-bloodred {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.bloodred-chapter-header {
+  margin-bottom: 1.5rem;
+}
+.bloodred-hero-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.bloodred-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.bloodred-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 8, 8, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-left: 2rem;
+}
+.bloodred-overlay-num {
+  font-size: 7rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--eb-font-header);
+  line-height: 1;
+}
+.bloodred-overlay-label {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  writing-mode: vertical-lr;
+  text-transform: uppercase;
+  font-family: var(--eb-font-header);
+}
+.bloodred-chapter-badge {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.bloodred-chapter-num {
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--eb-accent-light);
+  font-family: var(--eb-font-header);
+  line-height: 1;
+}
+.bloodred-chapter-label {
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--eb-accent);
+  writing-mode: vertical-lr;
+  text-transform: uppercase;
+  font-family: var(--eb-font-header);
+}
+.bloodred-page-title {
+  font-family: var(--eb-font-header);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--eb-accent);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.bloodred-body-lead {
+  font-family: var(--eb-font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+.bloodred-body-cols {
+  column-count: 2;
+  column-gap: 1.5rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  text-align: justify;
+  margin-bottom: 1.5rem;
+}
+.bloodred-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: auto;
+}
+.bloodred-gallery-item {
+  height: 100px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.bloodred-gallery-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mini-bloodred-header {
+  height: 52px;
+  background-color: var(--theme-accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.mini-bloodred-num {
+  font-family: var(--eb-font-header);
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.25);
+  line-height: 1;
+}
+.mini-bloodred-label {
+  font-family: var(--eb-font-header);
+  font-size: 0.5rem;
+  font-weight: 400;
+  color: #ffffff;
+  writing-mode: vertical-lr;
+  letter-spacing: 0.05em;
+}
+
+/* Typography override for bloodred */
+.bloodred-page-title { font-size: calc(1.8rem * var(--eb-font-size-mult, 1)) !important; }
+.bloodred-body-lead { font-size: calc(1.05rem * var(--eb-font-size-mult, 1)) !important; }
+.bloodred-body-cols { font-size: calc(0.85rem * var(--eb-font-size-mult, 1)) !important; }
+

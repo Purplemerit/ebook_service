@@ -259,7 +259,25 @@ export const ThemeCover: React.FC<{
     );
   }
 
-
+  if (themeId === 'bloodred') {
+    return (
+      <div className="layout-bloodred-cover">
+        <div className="bloodred-cover-chapter-badge">
+          <span className="bloodred-cover-num">01</span>
+          <span className="bloodred-cover-label">CHAPTER</span>
+        </div>
+        <h1
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => onTitleChange(e.currentTarget.innerText)}
+          className="bloodred-cover-title focus:outline-none focus:bg-white/10 rounded px-1 min-w-[100px] text-center"
+        >
+          {title}
+        </h1>
+        <div className="bloodred-cover-sub uppercase tracking-wider text-xs opacity-75 mt-2">E-Book Edition</div>
+      </div>
+    );
+  }
 
   // Default cover (editorial + legacy themes)
   return (
@@ -656,6 +674,60 @@ export const ThemeEditorial: React.FC<ThemeLayoutProps> = (props) => {
         <div className="nyt-sidebar">
           <span className="nyt-sidebar-head">Related Coverage</span>
           <p className="nyt-sidebar-text">Sit-In Protest Closes Border Bridge — developing story on page {pageNum}.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── BLOOD RED ──
+  if (themeId === 'bloodred') {
+    return (
+      <div className="layout-bloodred">
+        {shouldShowChapterHeading && (
+          <div className="bloodred-chapter-header">
+            <div className="bloodred-chapter-badge-wrapper">
+              {shouldShowImage ? (
+                <div className="bloodred-hero-container">
+                  <Img slot={imageSlots.primary} alt={chapterHeadingText} className="bloodred-hero-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+                  <div className="bloodred-hero-overlay">
+                    <span className="bloodred-overlay-num">{chNum}</span>
+                    <span className="bloodred-overlay-label">CHAPTER</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="bloodred-chapter-badge">
+                  <span className="bloodred-chapter-num">{chNum}</span>
+                  <span className="bloodred-chapter-label">CHAPTER</span>
+                </div>
+              )}
+            </div>
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onTextChange('title', e.currentTarget.innerText)}
+              className="bloodred-page-title"
+            >
+              {chapterHeadingText}
+            </h2>
+          </div>
+        )}
+
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => onTextChange('content', body ? `${e.currentTarget.innerHTML}<br><br>${body}` : e.currentTarget.innerHTML)}
+          dangerouslySetInnerHTML={{ __html: lead }}
+          className="bloodred-body-lead focus:outline-none focus:bg-black/5"
+        />
+
+        {body && bodyEditor('bloodred-body-cols focus:outline-none focus:bg-black/5 rounded p-1 whitespace-pre-line', true)}
+
+        <div className="bloodred-gallery">
+          {extras.slice(0, 3).map((slot, i) => (
+            <div key={i} className="bloodred-gallery-item">
+              <Img slot={slot} alt={`Gallery ${i}`} className="bloodred-gallery-img" imageVersion={imageVersion} isActive={isActive} pdfExportMode={pdfExportMode} />
+            </div>
+          ))}
         </div>
       </div>
     );

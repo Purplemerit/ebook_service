@@ -108,6 +108,14 @@ export function getThemeImageSlots(
       `Wide noir cinematic spread, deep shadows gold highlights, ${ch}`,
       `Mysterious atmospheric photograph, midnight noir style, ${ch}`,
     ],
+    bloodred: [
+      `Rich blood-red editorial fashion photo, ${ch}, high contrast, deep crimson background, luxury aesthetic`,
+      `High-contrast dramatic portrait, crimson lighting, fashion editorial, ${ch}`,
+      `Luxury lifestyle close-up, gold chains and deep red silk, ${book}`,
+      `Small editorial detail thumbnail, dark crimson roses, luxury aesthetic, ${ch}`,
+      `Wide luxury fashion spread, blood-red and warm cream color palette, ${ch}`,
+      `Editorial close-up fashion photography, rich textures, deep red color grade, ${ch}`,
+    ],
   };
 
   return buildSlots(promptSets[themeId], baseSeed);
