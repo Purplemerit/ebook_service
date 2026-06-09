@@ -199,31 +199,7 @@ textarea {
 .block { display: block !important; }
 .inline { display: inline !important; }
 
-/* Responsive Grid and Flex */
-@media (min-width: 640px) {
-  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .sm\:inline-block { display: inline-block !important; }
-  .sm\:p-8 { padding: 2rem !important; }
-  .sm\:inline { display: inline !important; }
-  .sm\:hidden { display: none !important; }
-  .sm\:flex { display: flex !important; }
-}
 
-@media (min-width: 768px) {
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .md\:flex { display: flex !important; }
-  .md\:hidden { display: none !important; }
-  .md\:flex-row { flex-direction: row !important; }
-  .md\:w-\[400px\] { width: 400px !important; flex-shrink: 0 !important; }
-  .md\:w-\[420px\] { width: 420px !important; flex-shrink: 0 !important; }
-}
-
-@media (min-width: 1024px) {
-  .lg\:flex { display: flex !important; }
-  .lg\:hidden { display: none !important; }
-  .lg\:flex-row { flex-direction: row !important; }
-  .lg\:w-\[420px\] { width: 420px !important; flex-shrink: 0 !important; }
-}
 
 /* Background colors */
 .bg-slate-900 { background-color: var(--text-primary) !important; }
@@ -459,6 +435,32 @@ button:disabled { opacity: 0.5 !important; cursor: not-allowed !important; }
 }
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Grid and Flex */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .sm\:inline-block { display: inline-block !important; }
+  .sm\:p-8 { padding: 2rem !important; }
+  .sm\:inline { display: inline !important; }
+  .sm\:hidden { display: none !important; }
+  .sm\:flex { display: flex !important; }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .md\:flex { display: flex !important; }
+  .md\:hidden { display: none !important; }
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:w-\[400px\] { width: 400px !important; flex-shrink: 0 !important; }
+  .md\:w-\[420px\] { width: 420px !important; flex-shrink: 0 !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex { display: flex !important; }
+  .lg\:hidden { display: none !important; }
+  .lg\:flex-row { flex-direction: row !important; }
+  .lg\:w-\[420px\] { width: 420px !important; flex-shrink: 0 !important; }
 }
 
 /* ==========================================================================

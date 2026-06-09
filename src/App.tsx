@@ -27,6 +27,7 @@ import {
   preloadExportImages,
   prepareElementForPdfCapture,
 } from './utils/pdfExport';
+import { exportFastTextPdf } from './utils/fastPdfExport';
 
 function App() {
   const [appView, setAppView] = useState<'landing' | 'studio'>('landing');
@@ -165,7 +166,14 @@ function App() {
     setExportStatus('Preparing images…');
     document.body.classList.add('pdf-exporting');
 
+    let stylesRestored = false;
     const restoreCaptureStyles = prepareElementForPdfCapture(element);
+    const safeRestoreStyles = () => {
+      if (!stylesRestored) {
+        restoreCaptureStyles();
+        stylesRestored = true;
+      }
+    };
 
     try {
       await preloadExportImages(sections, bookTitle, selectedTheme, (loaded, total) => {
@@ -195,15 +203,39 @@ function App() {
     } catch (err) {
       console.error('PDF generation failed: ', err);
       const message = err instanceof Error ? err.message : String(err);
-      if (message.includes('cancelled')) {
+      if (message.includes('cancelled') || abort.signal.aborted) {
         alert('PDF export cancelled.');
+      } else if (sections.length > 100) {
+        alert(`Styled PDF generation failed (${message}). Triggering fast text-based PDF fallback since your book is large (${sections.length} pages)...`);
+        try {
+          safeRestoreStyles();
+          flushSync(() => setPdfExportPageIndex(null));
+          document.body.classList.remove('pdf-exporting');
+
+          setExportStatus('Generating text-only PDF fallback...');
+          setExportProgress({ current: 0, total: sections.length });
+
+          await exportFastTextPdf({
+            bookTitle,
+            sections,
+            filename,
+            onProgress: (current, total) => setExportProgress({ current, total }),
+            signal: abort.signal,
+          });
+        } catch (fallbackErr) {
+          console.error('Fallback PDF generation failed: ', fallbackErr);
+          const fallbackMsg = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
+          if (!fallbackMsg.includes('cancelled') && !abort.signal.aborted) {
+            alert(`Could not export fallback PDF (${fallbackMsg}).`);
+          }
+        }
       } else {
         alert(`Could not export PDF${message ? ` (${message})` : ''}. Please try again.`);
       }
     } finally {
       exportAbortRef.current = null;
       flushSync(() => setPdfExportPageIndex(null));
-      restoreCaptureStyles();
+      safeRestoreStyles();
       document.body.classList.remove('pdf-exporting');
       setIsExporting(false);
       setExportProgress({ current: 0, total: 0 });

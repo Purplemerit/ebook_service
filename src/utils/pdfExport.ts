@@ -125,25 +125,82 @@ export async function waitForPageElement(
 }
 
 /** Wait until images inside the export root have loaded (or time out). */
-export function waitForExportImages(root: HTMLElement, timeoutMs = 3000): Promise<void> {
-  const images = Array.from(root.querySelectorAll('img'));
-  const pending = images.filter((img) => !img.complete || img.naturalWidth === 0);
-  if (pending.length === 0) return Promise.resolve();
+export async function waitForExportImages(root: HTMLElement, timeoutMs = 5000): Promise<void> {
+  // Yield for a small paint cycle to allow React's DOM changes to apply.
+  await yieldToBrowser(40);
 
-  return Promise.race([
-    Promise.all(
-      pending.map(
-        (img) =>
-          new Promise<void>((resolve) => {
-            if (img.complete && img.naturalWidth > 0) {
-              resolve();
-              return;
+  const images = Array.from(root.querySelectorAll('img'));
+  if (images.length === 0) return;
+
+  const promises = images.map((img) => {
+    return new Promise<void>((resolve) => {
+      // Helper to decode the image and resolve
+      const tryDecode = () => {
+        if (typeof img.decode === 'function') {
+          img.decode()
+            .then(() => resolve())
+            .catch(() => resolve());
+        } else {
+          resolve();
+        }
+      };
+
+      const checkComplete = () => {
+        if (img.complete && img.naturalWidth > 0) {
+          tryDecode();
+          return true;
+        }
+        return false;
+      };
+
+      // Already loaded?
+      if (img.src && checkComplete()) {
+        return;
+      }
+
+      let observer: MutationObserver | null = null;
+      let cleanedUp = false;
+
+      const cleanup = () => {
+        if (cleanedUp) return;
+        cleanedUp = true;
+        if (observer) {
+          observer.disconnect();
+        }
+        img.removeEventListener('load', onLoad);
+        img.removeEventListener('error', onError);
+      };
+
+      const onLoad = () => {
+        cleanup();
+        tryDecode();
+      };
+
+      const onError = () => {
+        cleanup();
+        resolve(); // Continue on error
+      };
+
+      img.addEventListener('load', onLoad);
+      img.addEventListener('error', onError);
+
+      if (!img.src) {
+        observer = new MutationObserver(() => {
+          if (img.src) {
+            observer?.disconnect();
+            observer = null;
+            if (checkComplete()) {
+              cleanup();
             }
-            img.addEventListener('load', () => resolve(), { once: true });
-            img.addEventListener('error', () => resolve(), { once: true });
-          })
-      )
-    ).then(() => undefined),
+          }
+        });
+        observer.observe(img, { attributes: true, attributeFilter: ['src'] });
+      }
+    });
+  });
+
+  await Promise.race([
+    Promise.all(promises).then(() => undefined),
     new Promise<void>((resolve) => setTimeout(resolve, timeoutMs)),
   ]);
 }
@@ -502,6 +559,9 @@ export async function exportStyledEbookPdf(options: PageByPageExportOptions): Pr
 
     try {
       await onRenderPage(i);
+      if (document.fonts?.ready) {
+        await document.fonts.ready.catch(() => undefined);
+      }
       await waitForNextPaint();
       await waitForNextPaint();
       await yieldToBrowser(settings.yieldMs);

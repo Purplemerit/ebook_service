@@ -352,15 +352,6 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
                 className="font-bold text-slate-900 text-xs bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none py-0 px-1 font-serif"
                 style={{ width: '180px' }}
               />
-              <div className="flex items-center gap-2.5 text-[10px] text-slate-400 font-medium px-1 mt-0.5">
-                <span>File</span>
-                <span>Edit</span>
-                <span>View</span>
-                <span>Insert</span>
-                <span>Format</span>
-                <span>Arrange</span>
-                <span>Page</span>
-              </div>
             </div>
           </div>
         </div>
@@ -388,6 +379,19 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
           >
             <span>Share</span>
           </button>
+          
+          <button
+            type="button"
+            onClick={() => setActiveRightSidebarTab(activeRightSidebarTab ? null : 'chat')}
+            className={`px-3 py-1.5 border hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm ${
+              activeRightSidebarTab ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200'
+            }`}
+            title="Toggle Designer Sidebar"
+          >
+            <Bot size={13} />
+            <span>{activeRightSidebarTab ? 'Hide Sidebar' : 'Show Sidebar'}</span>
+          </button>
+
           <button
             onClick={onDownloadPDF}
             disabled={isExporting}
@@ -622,7 +626,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
         
         {/* 3.1 LEFT PAGES THUMBNAILS DRAWER */}
         {isPagesPanelOpen && (
-          <aside className="w-[160px] bg-white border-r border-slate-200 flex flex-col h-full shrink-0 z-10 animate-fade-in no-print">
+          <aside style={{ width: '160px', minWidth: '160px', maxWidth: '160px' }} className="bg-white border-r border-slate-200 flex flex-col h-full shrink-0 z-10 animate-fade-in no-print">
             <div className="p-3 border-b border-slate-100 flex items-center justify-between shrink-0">
               <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
                 <Layers size={11} />
@@ -707,7 +711,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
         {/* 3.3 RIGHT SIDEBAR PANEL */}
         {activeRightSidebarTab && (
-          <aside className="w-[320px] bg-white border-l border-slate-200 flex flex-col h-full shrink-0 z-10 no-print animate-fade-in">
+          <aside style={{ width: '320px', minWidth: '320px', maxWidth: '320px' }} className="bg-white border-l border-slate-200 flex flex-col h-full shrink-0 z-10 no-print animate-fade-in">
             {/* Sidebar Tabs */}
             <div className="flex bg-slate-50 border-b border-slate-200 p-1 shrink-0">
               {[
