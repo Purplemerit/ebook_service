@@ -282,7 +282,8 @@ export async function preloadExportImages(
   sections: EbookSection[],
   bookTitle: string,
   themeId: ThemeId,
-  onPreloadProgress?: (loaded: number, total: number) => void
+  onPreloadProgress?: (loaded: number, total: number) => void,
+  signal?: AbortSignal
 ): Promise<void> {
   clearExportImageCache();
   const slots = collectExportImageSlots(sections, bookTitle, themeId);
@@ -290,13 +291,18 @@ export async function preloadExportImages(
   let loaded = 0;
 
   for (let i = 0; i < slots.length; i += batchSize) {
+    if (signal?.aborted) {
+      throw new Error('Export cancelled.');
+    }
     await Promise.all(
       slots.slice(i, i + batchSize).map(async ({ prompt, seed }) => {
+        if (signal?.aborted) return;
         const sourceUrl = getExportSafeImageUrl(prompt, seed);
         const fullResUrl = sourceUrl.includes('picsum.photos')
           ? getStockFallbackUrl(prompt, seed, 800, 600)
           : sourceUrl;
         const dataUrl = await toExportDataUrl(fullResUrl, 800);
+        if (signal?.aborted) return;
         cacheExportImageDataUrl(prompt, seed, dataUrl);
         loaded++;
         onPreloadProgress?.(loaded, slots.length);
@@ -580,6 +586,9 @@ export async function exportStyledEbookPdf(options: PageByPageExportOptions): Pr
         restoreFit();
       }
     } catch (pageErr) {
+      if (signal?.aborted || (pageErr instanceof Error && pageErr.message.includes('cancelled'))) {
+        throw pageErr;
+      }
       failedPages++;
       console.warn(`PDF export skipped page ${i + 1}:`, pageErr);
     }

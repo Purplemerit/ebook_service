@@ -573,6 +573,9 @@ html:has(.celestial-landing) {
     var(--cel-warm) 100%
   );
   position: relative;
+  border-right: 1.5px solid rgba(28, 28, 28, 0.12);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+  z-index: 10;
 }
 
 .celestial-studio-header {

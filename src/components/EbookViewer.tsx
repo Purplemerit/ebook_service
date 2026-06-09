@@ -22,7 +22,6 @@ import {
   MessageSquare,
   Sliders,
   RefreshCw,
-  Palette,
   Undo2,
   Redo2,
   Bot,
@@ -134,10 +133,10 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
   const useCompactPreview = isLargeBook || viewMode === 'single';
 
   // Aspect ratio sizes
-  const pageDims = dimensions === 'letter' 
-    ? { w: 612, h: 792 } 
-    : dimensions === 'legal' 
-      ? { w: 612, h: 1008 } 
+  const pageDims = dimensions === 'letter'
+    ? { w: 612, h: 792 }
+    : dimensions === 'legal'
+      ? { w: 612, h: 1008 }
       : { w: 595, h: 842 }; // standard A4
 
   const handlePrint = () => {
@@ -326,20 +325,20 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-100 text-slate-800 font-sans overflow-hidden relative select-none">
-      
+
       {/* 1. TOP HEADER */}
       <header className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-slate-200 shrink-0 z-30 no-print">
         <div className="flex items-center gap-3">
           <button
             onClick={handleDashboardClick}
-            className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-slate-800 transition shadow-sm"
+            className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-slate-800 transition shadow-sm ml-2"
           >
             <ArrowLeft size={13} />
             <span>{isDashboardVisible ? 'Hide Dashboard' : 'Dashboard'}</span>
           </button>
-          
+
           <div className="w-[1.5px] h-5 bg-slate-200" />
-          
+
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-rose-500/20">
               PDF
@@ -362,7 +361,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
               Copied link to clipboard!
             </span>
           )}
-          
+
           <button
             type="button"
             onClick={handlePrint}
@@ -372,20 +371,19 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
             <span>Print</span>
           </button>
 
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={triggerShare}
             className="px-3.5 py-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm"
           >
             <span>Share</span>
           </button>
-          
+
           <button
             type="button"
             onClick={() => setActiveRightSidebarTab(activeRightSidebarTab ? null : 'chat')}
-            className={`px-3 py-1.5 border hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm ${
-              activeRightSidebarTab ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200'
-            }`}
+            className={`px-3 py-1.5 border hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm ${activeRightSidebarTab ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200'
+              }`}
             title="Toggle Designer Sidebar"
           >
             <Bot size={13} />
@@ -395,7 +393,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
           <button
             onClick={onDownloadPDF}
             disabled={isExporting}
-            className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow-md transition disabled:opacity-75"
+            className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow-md transition disabled:opacity-75 mr-2"
           >
             {isExporting ? (
               <>
@@ -506,26 +504,26 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
         {/* Insert Shortcuts */}
         <div className="flex bg-white rounded-lg border border-slate-200 shadow-sm p-0.5 shrink-0 relative">
-          <button 
+          <button
             onClick={() => setActiveRightSidebarTab('details')}
-            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition" 
+            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition"
             title="Insert Illustration"
           >
             <ImageIcon size={13} />
           </button>
-          <button 
+          <button
             onClick={() => setActiveRightSidebarTab('details')}
-            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition" 
+            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition"
             title="Insert Text Box"
           >
             <Type size={13} />
           </button>
-          
+
           {/* Sticker picker */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setStickersOpen(!stickersOpen)}
-              className={`p-1.5 rounded transition ${stickersOpen ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`} 
+              className={`p-1.5 rounded transition ${stickersOpen ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
               title="Add Sticker Deco"
             >
               <Smile size={13} />
@@ -547,9 +545,9 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
           {/* Draw mode */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setDrawMode(!drawMode)}
-              className={`p-1.5 rounded transition ${drawMode ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`} 
+              className={`p-1.5 rounded transition ${drawMode ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
               title="Toggle Pen tool"
             >
               <PenTool size={13} />
@@ -568,16 +566,16 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
             )}
           </div>
 
-          <button 
+          <button
             onClick={addTableToActivePage}
-            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition" 
+            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition"
             title="Insert Table Grid"
           >
             <Table size={13} />
           </button>
-          <button 
+          <button
             onClick={() => setActiveRightSidebarTab('chat')}
-            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition" 
+            className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded transition"
             title="Add Comment"
           >
             <MessageSquare size={13} />
@@ -623,7 +621,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
       {/* 3. MAIN WORKSPACE CONTAINER */}
       <div className="flex-1 flex overflow-hidden relative w-full h-full">
-        
+
         {/* 3.1 LEFT PAGES THUMBNAILS DRAWER */}
         {isPagesPanelOpen && (
           <aside style={{ width: '160px', minWidth: '160px', maxWidth: '160px' }} className="bg-white border-r border-slate-200 flex flex-col h-full shrink-0 z-10 animate-fade-in no-print">
@@ -636,7 +634,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
                 {sections.length}
               </span>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-3.5 space-y-3 bg-slate-50/45">
               {sections.map((sec, idx) => {
                 const isActive = activePageIndex === idx;
@@ -655,9 +653,9 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
                           totalPages={sections.length}
                           bookTitle={bookTitle}
                           selectedTheme={selectedTheme}
-                          onUpdateSection={() => {}}
-                          onDeleteSection={() => {}}
-                          onRegenerateImage={async () => {}}
+                          onUpdateSection={() => { }}
+                          onDeleteSection={() => { }}
+                          onRegenerateImage={async () => { }}
                           isGeneratingImage={false}
                           isActive={false}
                         />
@@ -673,16 +671,15 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
         {/* 3.2 CENTER WORKSPACE CANVAS */}
         <main className={`flex-1 overflow-auto p-12 flex flex-col justify-start items-center relative ebook-workspace-canvas ${dottedGrid ? 'canvas-grid-dots' : ''}`}>
-          
+
           <div
             id="ebook-print-area"
-            className={`print-container theme-${selectedTheme} ${
-              viewMode === 'spread'
+            className={`print-container theme-${selectedTheme} ${viewMode === 'spread'
                 ? 'grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1240px]'
                 : viewMode === 'grid'
                   ? 'flex flex-wrap justify-center items-start gap-6 w-full'
                   : 'flex flex-col gap-8'
-            }`}
+              }`}
           >
             {useCompactPreview && viewMode !== 'grid'
               ? sections[activePageIndex] && renderPage(sections[activePageIndex], activePageIndex)
@@ -716,9 +713,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
             <div className="flex bg-slate-50 border-b border-slate-200 p-1 shrink-0">
               {[
                 { id: 'chat', label: 'Chat', icon: Bot },
-                { id: 'design', label: 'Design', icon: Palette },
                 { id: 'details', label: 'Details', icon: Sliders },
-                { id: 'assets', label: 'Assets', icon: ImageIcon },
               ].map(tb => {
                 const IsActive = activeRightSidebarTab === tb.id;
                 const Icon = tb.icon;
@@ -744,7 +739,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
             {/* Sidebar content container */}
             <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
-              
+
               {/* CHAT TAB */}
               {activeRightSidebarTab === 'chat' && (
                 <div className="flex-1 flex flex-col min-h-0 bg-slate-50/20">
@@ -883,7 +878,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
 
                       <div className="bg-slate-50 border border-slate-200/50 rounded-xl p-3.5 space-y-2">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Image Illustration Settings</span>
-                        
+
                         <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
                           <span>Show Image on Page</span>
                           <input
@@ -950,7 +945,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
               {activeRightSidebarTab === 'animate' && (
                 <div className="p-4 space-y-4 flex-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Transition Animations</span>
-                  
+
                   <div className="space-y-2">
                     {['Fade transition', 'Slide transition', 'Zoom transition', 'No transition'].map((an, idx) => (
                       <button
@@ -990,8 +985,8 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
         <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-50 bg-indigo-600 text-white px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2.5 text-xs font-semibold tracking-wide animate-pulse no-print">
           <RefreshCw className="animate-spin text-white shrink-0" size={13} />
           <span>
-            {isStyling 
-              ? 'Moda is designing — please wait to edit' 
+            {isStyling
+              ? 'Moda is designing — please wait to edit'
               : `Exporting PDF (${exportProgress.current}/${exportProgress.total}) — please wait...`}
           </span>
         </div>
@@ -1012,9 +1007,9 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
               totalPages={sections.length}
               bookTitle={bookTitle}
               selectedTheme={selectedTheme}
-              onUpdateSection={() => {}}
-              onDeleteSection={() => {}}
-              onRegenerateImage={async () => {}}
+              onUpdateSection={() => { }}
+              onDeleteSection={() => { }}
+              onRegenerateImage={async () => { }}
               isGeneratingImage={false}
               isActive={true}
             />

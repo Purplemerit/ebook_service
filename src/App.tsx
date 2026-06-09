@@ -35,7 +35,7 @@ function App() {
   const [sections, setSections] = useState<EbookSection[]>([]);
   const [isParsing, setIsParsing] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
-  
+
   // Load Groq configuration strictly from the local environment variable
   const groqConfig: GroqConfig = {
     apiKey: import.meta.env.VITE_GROQ_API_KEY || '',
@@ -104,7 +104,7 @@ function App() {
   useEffect(() => {
     const fontsToLoad = [customFontHeader, customFontBody].filter(Boolean) as string[];
     if (fontsToLoad.length === 0) return;
-    
+
     // De-duplicate and filter out system fallbacks
     const uniqueFonts = Array.from(new Set(fontsToLoad)).filter(f => !['serif', 'sans-serif', 'monospace', 'cursive'].includes(f.toLowerCase()));
     if (uniqueFonts.length === 0) return;
@@ -178,7 +178,7 @@ function App() {
     try {
       await preloadExportImages(sections, bookTitle, selectedTheme, (loaded, total) => {
         setExportStatus(`Preparing images… (${loaded}/${total})`);
-      });
+      }, abort.signal);
 
       if (abort.signal.aborted) {
         throw new Error('Export cancelled.');
@@ -255,6 +255,8 @@ function App() {
       setBookTitle(result.title);
       setSections(ensureSectionImageUrls(result.sections, result.title));
       setActivePageIndex(0);
+      setIsDashboardVisible(true);
+      setActiveMobileView('controls');
       setAppView('studio');
     } catch (err: any) {
       console.error(err);
@@ -306,6 +308,8 @@ function App() {
     setBookTitle(title);
     setSections(ensureSectionImageUrls(demoSections, title));
     setActivePageIndex(0);
+    setIsDashboardVisible(true);
+    setActiveMobileView('controls');
     setAppView('studio');
   };
 
@@ -354,7 +358,7 @@ function App() {
     try {
       for (let i = 0; i < sections.length; i++) {
         const current = sections[i];
-        
+
         // Don't rewrite the cover page summary, but do generate its prompt
         let rewrittenContent = current.content;
         if (current.layout !== 'cover') {
@@ -416,7 +420,7 @@ function App() {
   const handleRegenerateImage = async (index: number, customPrompt?: string) => {
     setIsGeneratingImageMap((prev) => ({ ...prev, [index]: true }));
     const current = sections[index];
-    
+
     let targetPrompt = customPrompt || current.imagePrompt;
 
     // If no custom prompt provided, and Groq is configured, generate a fresh prompt based on current text
@@ -528,21 +532,19 @@ function App() {
         <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
           <button
             onClick={() => setActiveMobileView('controls')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeMobileView === 'controls'
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeMobileView === 'controls'
                 ? 'bg-indigo-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             Dashboard
           </button>
           <button
             onClick={() => setActiveMobileView('preview')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeMobileView === 'preview'
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeMobileView === 'preview'
                 ? 'bg-indigo-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             Preview
           </button>
@@ -551,7 +553,7 @@ function App() {
 
       <div className="flex-1 flex flex-col md:flex-row w-full h-full overflow-hidden">
         {/* 1. Dashboard Control Panel Wrapper */}
-        <div className={`${isDashboardVisible && activeMobileView === 'controls' ? 'flex' : (isDashboardVisible ? 'hidden md:flex' : 'hidden')} w-full md:w-[400px] h-full overflow-hidden shrink-0`}>
+        <div className={`${isDashboardVisible && activeMobileView === 'controls' ? 'flex' : (isDashboardVisible ? 'hidden md:flex' : 'hidden')} w-full md:w-[400px] h-full overflow-hidden shrink-0 border-r border-slate-200/40 z-10`}>
           <Dashboard
             bookTitle={bookTitle}
             onChangeTitle={setBookTitle}
@@ -601,7 +603,7 @@ function App() {
             onNavigateToDashboard={() => setActiveMobileView('controls')}
             activePageIndex={activePageIndex}
             onSelectPage={handleSelectPage}
-            
+
             // Customizer state and actions
             onChangeTheme={setSelectedTheme}
             customBgColor={customBgColor}
@@ -618,12 +620,12 @@ function App() {
             onChangeFontSizeMult={setCustomFontSizeMult}
             onStyleChapters={handleStyleChapters}
             isStyling={isStyling}
-            
+
             // Dashboard toggle actions
             isDashboardVisible={isDashboardVisible}
             onToggleDashboard={() => setIsDashboardVisible(!isDashboardVisible)}
           />
-          
+
           {/* Progress Overlay during AI styling */}
           {isStyling && (
             <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center space-y-4 no-print animate-fade-in">
@@ -690,9 +692,9 @@ function App() {
                 totalPages={sections.length}
                 bookTitle={bookTitle}
                 selectedTheme={selectedTheme}
-                onUpdateSection={() => {}}
-                onDeleteSection={() => {}}
-                onRegenerateImage={async () => {}}
+                onUpdateSection={() => { }}
+                onDeleteSection={() => { }}
+                onRegenerateImage={async () => { }}
                 isGeneratingImage={false}
                 isActive={true}
                 pdfExportMode
