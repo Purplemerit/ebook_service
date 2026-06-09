@@ -194,6 +194,11 @@ textarea {
 .gap-4 { gap: 1rem !important; }
 .gap-6 { gap: 1.5rem !important; }
 
+.hidden { display: none !important; }
+.inline-block { display: inline-block !important; }
+.block { display: block !important; }
+.inline { display: inline !important; }
+
 /* Responsive Grid and Flex */
 @media (min-width: 640px) {
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
@@ -359,10 +364,6 @@ textarea {
 .overflow-x-auto { overflow-x: auto !important; }
 .overflow-y-auto { overflow-y: auto !important; }
 .select-none { user-select: none; }
-.hidden { display: none !important; }
-.inline-block { display: inline-block !important; }
-.block { display: block !important; }
-.inline { display: inline !important; }
 .resize-none { resize: none !important; }
 
 /* Spacings (Margins and Paddings) */

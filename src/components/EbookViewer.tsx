@@ -81,6 +81,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
   onDownloadPDF,
   isExporting,
   exportProgress,
+  onNavigateToDashboard,
   activePageIndex,
   onSelectPage,
 
@@ -161,6 +162,17 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
     navigator.clipboard.writeText(window.location.href);
     setShareToast(true);
     setTimeout(() => setShareToast(false), 2500);
+  };
+
+  const handleDashboardClick = () => {
+    if (!isDashboardVisible) {
+      onToggleDashboard();
+    } else {
+      if (window.innerWidth >= 768) {
+        onToggleDashboard();
+      }
+    }
+    onNavigateToDashboard();
   };
 
   const handleChatSubmit = async (e: React.FormEvent) => {
@@ -319,7 +331,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
       <header className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-slate-200 shrink-0 z-30 no-print">
         <div className="flex items-center gap-3">
           <button
-            onClick={onToggleDashboard}
+            onClick={handleDashboardClick}
             className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-slate-800 transition shadow-sm"
           >
             <ArrowLeft size={13} />
@@ -448,14 +460,28 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
             <Square size={13} />
           </button>
           <button
-            onClick={() => setViewMode('spread')}
+            onClick={() => {
+              setViewMode('spread');
+              setIsPagesPanelOpen(false);
+              setActiveRightSidebarTab(null);
+              if (isDashboardVisible) {
+                onToggleDashboard();
+              }
+            }}
             className={`p-1 rounded-md transition ${viewMode === 'spread' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'}`}
             title="Two page spreads"
           >
             <Columns size={13} />
           </button>
           <button
-            onClick={() => setViewMode('grid')}
+            onClick={() => {
+              setViewMode('grid');
+              setIsPagesPanelOpen(false);
+              setActiveRightSidebarTab(null);
+              if (isDashboardVisible) {
+                onToggleDashboard();
+              }
+            }}
             className={`p-1 rounded-md transition ${viewMode === 'grid' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'}`}
             title="Grid board overview"
           >
