@@ -12,11 +12,15 @@
     "kafka:consumer": "tsx workers/kafka-blog-consumer.ts",
     "kafka:create-topics": "tsx scripts/kafka-create-topics.ts",
     "kafka:test-publish": "tsx scripts/publish-test-blog-event.ts",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
     "install:chrome": "puppeteer browsers install chrome"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",
     "bullmq": "^5.78.0",
+    "cloudinary": "^2.10.0",
     "html2canvas": "^1.4.1",
     "ioredis": "^5.11.1",
     "jspdf": "^4.2.1",

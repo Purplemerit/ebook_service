@@ -2,7 +2,7 @@ import { splitSection } from '@/lib/utils/contentSplitter';
 import type { EbookSection } from '@/lib/utils/pdfParser';
 import { buildImageUrl, ensureSectionImageUrls } from '@/lib/utils/imageHelper';
 import type { ThemeId } from '@/lib/themes/types';
-import type { BlogPdfGenerateEvent } from './types';
+import type { NewsletterPdfGenerateEvent } from './types';
 
 function escapeHtml(text: string): string {
   return text
@@ -27,7 +27,7 @@ export function normalizeBlogContent(content: string): string {
 }
 
 export function blogEventToFormattedPages(
-  event: BlogPdfGenerateEvent,
+  event: NewsletterPdfGenerateEvent,
   theme: ThemeId = 'editorial'
 ): EbookSection[] {
   const bookTitle = event.title.trim() || 'Blog Post';

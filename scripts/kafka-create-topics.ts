@@ -2,18 +2,18 @@ import '../lib/utils/bootstrapEnv';
 
 import { ensureKafkaTopicsWithRetry } from '../lib/kafka/ensureTopics';
 import {
-  getBlogPdfCompletedTopic,
-  getBlogPdfFailedTopic,
-  getBlogPdfTopic,
   getKafkaBrokers,
+  getNewsletterPdfCompletedTopic,
+  getNewsletterPdfFailedTopic,
+  getNewsletterPdfTopic,
 } from '../lib/kafka/config';
 
 async function main() {
   await ensureKafkaTopicsWithRetry();
   console.log('[kafka] Ready. Topics:');
-  console.log(`  - ${getBlogPdfTopic()}`);
-  console.log(`  - ${getBlogPdfCompletedTopic()}`);
-  console.log(`  - ${getBlogPdfFailedTopic()}`);
+  console.log(`  - ${getNewsletterPdfTopic()}`);
+  console.log(`  - ${getNewsletterPdfCompletedTopic()}`);
+  console.log(`  - ${getNewsletterPdfFailedTopic()}`);
   console.log(`[kafka] Brokers: ${getKafkaBrokers().join(', ')}`);
 }
 

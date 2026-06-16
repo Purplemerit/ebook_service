@@ -1,13 +1,18 @@
 import type { PdfExportJobData } from '@/lib/queue/pdfExportTypes';
 import { generateServerPdf } from '@/lib/utils/serverPdfExport';
-import { getAppBaseUrl } from '@/lib/utils/exportRenderAuth';
+import { getPublicAppBaseUrl } from '@/lib/utils/exportRenderAuth';
+import { isCloudinaryConfigured, uploadPdfToCloudinary } from '@/lib/utils/cloudinaryUpload';
 import { blogEventToFormattedPages } from './blogEventToSections';
 import { publishBlogPdfCompleted, publishBlogPdfFailed } from './producer';
 import { deleteRenderJob, saveRenderJob } from './renderJobStore';
-import type { BlogPdfGenerateEvent } from './types';
+import {
+  NEWSLETTER_PDF_COMPLETED_EVENT,
+  NEWSLETTER_PDF_FAILED_EVENT,
+  type NewsletterPdfGenerateEvent,
+} from './types';
 import { resolveBlogTheme } from './types';
 
-export async function handleBlogPdfEvent(event: BlogPdfGenerateEvent): Promise<void> {
+export async function handleBlogPdfEvent(event: NewsletterPdfGenerateEvent): Promise<void> {
   const jobId = event.eventId;
   const theme = resolveBlogTheme(event.theme);
   const dimensions = event.dimensions || 'a4';
@@ -37,11 +42,17 @@ export async function handleBlogPdfEvent(event: BlogPdfGenerateEvent): Promise<v
       },
     });
 
-    const baseUrl = getAppBaseUrl().replace(/\/$/, '');
-    const downloadUrl = `${baseUrl}/api/blog-pdf/download/${jobId}`;
+    const baseUrl = getPublicAppBaseUrl().replace(/\/$/, '');
+    const downloadUrl = isCloudinaryConfigured()
+      ? await uploadPdfToCloudinary(result.filePath, jobId)
+      : `${baseUrl}/api/blog-pdf/download/${jobId}`;
+
+    if (isCloudinaryConfigured()) {
+      console.log(`[kafka-blog] Uploaded ${jobId} to Cloudinary`);
+    }
 
     await publishBlogPdfCompleted({
-      eventType: 'blog.pdf.completed',
+      eventType: NEWSLETTER_PDF_COMPLETED_EVENT,
       eventId: jobId,
       blogId: event.blogId,
       filename: result.filename,
@@ -55,7 +66,7 @@ export async function handleBlogPdfEvent(event: BlogPdfGenerateEvent): Promise<v
     const message = err instanceof Error ? err.message : String(err);
 
     await publishBlogPdfFailed({
-      eventType: 'blog.pdf.failed',
+      eventType: NEWSLETTER_PDF_FAILED_EVENT,
       eventId: jobId,
       blogId: event.blogId,
       error: message,

@@ -92,7 +92,9 @@ async function waitForMostImages(page: Page, timeoutMs: number): Promise<void> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const ratio = await page.evaluate(() => {
-      const imgs = Array.from(document.querySelectorAll('[data-print-export-root] img'));
+      const imgs = Array.from(
+        document.querySelectorAll('[data-print-export-root] img')
+      ) as HTMLImageElement[];
       if (!imgs.length) return 1;
       const loaded = imgs.filter((img) => img.complete && img.naturalWidth > 0).length;
       return loaded / imgs.length;

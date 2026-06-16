@@ -10,17 +10,31 @@ export function getKafkaClientId(): string {
 }
 
 export function getKafkaConsumerGroupId(): string {
-  return process.env.KAFKA_GROUP_ID || 'ebook-generator-blog-consumers';
+  return process.env.KAFKA_GROUP_ID || 'ebook-generator-newsletter-consumers';
 }
 
+/** Incoming topic — blog_service publishes NEWS_LETTER_PDF events here. */
+export function getNewsletterPdfTopic(): string {
+  return process.env.KAFKA_TOPIC_NEWSLETTER_PDF || 'NEWS_LETTER_PDF';
+}
+
+export function getNewsletterPdfCompletedTopic(): string {
+  return process.env.KAFKA_TOPIC_NEWSLETTER_PDF_COMPLETED || 'NEWS_LETTER_PDF_COMPLETED';
+}
+
+export function getNewsletterPdfFailedTopic(): string {
+  return process.env.KAFKA_TOPIC_NEWSLETTER_PDF_FAILED || 'NEWS_LETTER_PDF_FAILED';
+}
+
+/** @deprecated Use getNewsletterPdfTopic */
 export function getBlogPdfTopic(): string {
-  return process.env.KAFKA_TOPIC_BLOG_PDF || 'blog_service.pdf.generate';
+  return getNewsletterPdfTopic();
 }
 
 export function getBlogPdfCompletedTopic(): string {
-  return process.env.KAFKA_TOPIC_BLOG_PDF_COMPLETED || 'blog_service.pdf.completed';
+  return getNewsletterPdfCompletedTopic();
 }
 
 export function getBlogPdfFailedTopic(): string {
-  return process.env.KAFKA_TOPIC_BLOG_PDF_FAILED || 'blog_service.pdf.failed';
+  return getNewsletterPdfFailedTopic();
 }

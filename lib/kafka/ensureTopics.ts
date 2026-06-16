@@ -1,8 +1,8 @@
 import { Kafka } from 'kafkajs';
 import {
-  getBlogPdfCompletedTopic,
-  getBlogPdfFailedTopic,
-  getBlogPdfTopic,
+  getNewsletterPdfCompletedTopic,
+  getNewsletterPdfFailedTopic,
+  getNewsletterPdfTopic,
   getKafkaBrokers,
   getKafkaClientId,
 } from './config';
@@ -22,9 +22,9 @@ export async function ensureKafkaTopics(): Promise<void> {
 
   try {
     const required = [
-      getBlogPdfTopic(),
-      getBlogPdfCompletedTopic(),
-      getBlogPdfFailedTopic(),
+      getNewsletterPdfTopic(),
+      getNewsletterPdfCompletedTopic(),
+      getNewsletterPdfFailedTopic(),
     ];
 
     const existing = await admin.listTopics();

@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+exports
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.example
+tsconfig.tsbuildinfo
+terminals

@@ -2,7 +2,7 @@ import '../lib/utils/bootstrapEnv';
 
 import { Kafka, type Consumer } from 'kafkajs';
 import {
-  getBlogPdfTopic,
+  getNewsletterPdfTopic,
   getKafkaBrokers,
   getKafkaClientId,
   getKafkaConsumerGroupId,
@@ -10,7 +10,7 @@ import {
 import { ensureKafkaTopicsWithRetry } from '../lib/kafka/ensureTopics';
 import { handleBlogPdfEvent } from '../lib/kafka/handleBlogPdfEvent';
 import { disconnectKafkaProducer } from '../lib/kafka/producer';
-import { isBlogPdfGenerateEvent } from '../lib/kafka/types';
+import { isNewsletterPdfGenerateEvent } from '../lib/kafka/types';
 
 let consumer: Consumer | null = null;
 let shuttingDown = false;
@@ -26,7 +26,7 @@ async function startConsumer(): Promise<void> {
   consumer = kafka.consumer({ groupId: getKafkaConsumerGroupId() });
   await consumer.connect();
 
-  const topic = getBlogPdfTopic();
+  const topic = getNewsletterPdfTopic();
   await consumer.subscribe({ topic, fromBeginning: false });
 
   console.log(`[kafka-blog] Listening on topic "${topic}"`);
@@ -47,7 +47,7 @@ async function startConsumer(): Promise<void> {
         return;
       }
 
-      if (!isBlogPdfGenerateEvent(parsed)) {
+      if (!isNewsletterPdfGenerateEvent(parsed)) {
         console.warn(`[kafka-blog] Ignoring unknown event:`, raw.slice(0, 200));
         return;
       }

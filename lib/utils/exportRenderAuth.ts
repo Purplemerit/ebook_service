@@ -10,6 +10,11 @@ export function getAppBaseUrl(): string {
   return process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000';
 }
 
+/** Public URL for download links sent to external services (may differ from internal APP_URL in Docker). */
+export function getPublicAppBaseUrl(): string {
+  return process.env.PUBLIC_APP_URL || getAppBaseUrl();
+}
+
 export function buildExportRenderUrl(jobId: string): string {
   const base = getAppBaseUrl().replace(/\/$/, '');
   const token = encodeURIComponent(getExportRenderSecret());
