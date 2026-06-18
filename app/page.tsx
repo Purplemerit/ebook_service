@@ -20,6 +20,7 @@ import {
 import type { GroqConfig } from '@/lib/utils/groqHelper';
 import { Compass, Sparkles } from 'lucide-react';
 import { LandingPage } from '@/app/components/LandingPage';
+import { ThemeSelectionPage } from '@/app/components/ThemeSelectionPage';
 import type { ThemeId } from '@/lib/themes/types';
 import { ExportProgressOverlay } from '@/app/components/ExportProgressOverlay';
 import {
@@ -34,7 +35,7 @@ import {
 } from '@/lib/utils/queuePdfExport';
 
 function App() {
-  const [appView, setAppView] = useState<'landing' | 'studio'>('landing');
+  const [appView, setAppView] = useState<'landing' | 'theme-selection' | 'studio'>('landing');
   const [bookTitle, setBookTitle] = useState('');
   const [sections, setSections] = useState<EbookSection[]>([]);
   const [isParsing, setIsParsing] = useState(false);
@@ -325,7 +326,7 @@ function App() {
       setActivePageIndex(0);
       setIsDashboardVisible(true);
       setActiveMobileView('controls');
-      setAppView('studio');
+      setAppView('theme-selection');
     } catch (err: any) {
       console.error(err);
       setParseError(err.message || 'An unexpected error occurred while parsing the PDF.');
@@ -380,7 +381,7 @@ function App() {
     setActivePageIndex(0);
     setIsDashboardVisible(true);
     setActiveMobileView('controls');
-    setAppView('studio');
+    setAppView('theme-selection');
   };
 
   const handleUpdateSection = (formattedIndex: number, updated: EbookSection) => {
@@ -633,6 +634,19 @@ function App() {
     );
   }
 
+  if (appView === 'theme-selection') {
+    return (
+      <ThemeSelectionPage
+        sections={formattedPages}
+        bookTitle={bookTitle}
+        selectedTheme={selectedTheme}
+        onChangeTheme={setSelectedTheme}
+        onNext={() => setAppView('studio')}
+        onBack={() => setAppView('landing')}
+      />
+    );
+  }
+
   return (
     <div className="app-shell flex flex-col h-screen w-screen overflow-hidden select-none">
       {/* Mobile Top Navigation Toggle (hidden on desktop screens >= 768px) */}
@@ -698,6 +712,7 @@ function App() {
             onDownloadPDF={handleDownloadPDF}
             isExporting={isExporting}
             exportProgress={exportProgress}
+            onNavigateToThemes={() => setAppView('theme-selection')}
           />
         </div>
 

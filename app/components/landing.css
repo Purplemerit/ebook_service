@@ -1177,3 +1177,91 @@ html:has(.celestial-landing) {
   background-color: var(--theme-accent);
 }
 
+/* Theme selection page layout and cards styling */
+.celestial-themes-grid-page {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .celestial-themes-grid-page {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+.celestial-theme-card-page {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.celestial-theme-card-page:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(28, 28, 28, 0.15);
+  box-shadow: 0 16px 40px rgba(28, 28, 28, 0.08);
+}
+
+.celestial-theme-card-page.selected {
+  background: #ffffff;
+  border-color: var(--cel-text);
+  box-shadow: 0 20px 48px rgba(124, 58, 237, 0.08), 0 0 0 1.5px var(--cel-text);
+}
+
+.celestial-theme-card-page .card-top-header {
+  margin-bottom: 0.75rem;
+}
+
+.celestial-theme-card-page .theme-card-title {
+  font-family: var(--cel-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cel-text);
+}
+
+.celestial-theme-card-page .theme-card-description {
+  font-size: 0.78rem;
+  color: var(--cel-muted);
+  margin-top: 0.35rem;
+  line-height: 1.45;
+  min-height: 2.8rem;
+}
+
+.celestial-theme-card-page .theme-card-active-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  background: var(--cel-text);
+  padding: 0.25rem 0.55rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.celestial-theme-card-page .celestial-theme-preview {
+  width: 143px !important;
+  height: 202px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.celestial-theme-card-page .celestial-theme-preview .mini-layout {
+  padding: 8px !important;
+  height: 100% !important;
+}
+
+
