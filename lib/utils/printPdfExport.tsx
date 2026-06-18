@@ -46,12 +46,8 @@ function injectPrintStyles(pageW: number, pageH: number): void {
         width: ${pageW}px !important;
         background: white !important;
       }
-      body * {
-        visibility: hidden !important;
-      }
-      #${PRINT_EXPORT_ROOT_ID},
-      #${PRINT_EXPORT_ROOT_ID} * {
-        visibility: visible !important;
+      body > *:not(.print-mount-point) {
+        display: none !important;
       }
       #${PRINT_EXPORT_ROOT_ID} {
         position: absolute !important;
@@ -154,6 +150,7 @@ export async function exportPrintPdf(options: PrintPdfExportOptions): Promise<vo
   injectPrintStyles(pageW, pageH);
 
   const mountPoint = document.createElement('div');
+  mountPoint.className = 'print-mount-point';
   document.body.appendChild(mountPoint);
 
   const root = createRoot(mountPoint);
