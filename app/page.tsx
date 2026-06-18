@@ -136,7 +136,7 @@ function App() {
     }));
   };
 
-  const [isDashboardVisible, setIsDashboardVisible] = useState(true);
+  const [isDashboardVisible, setIsDashboardVisible] = useState(false);
 
   // Load custom Google Fonts dynamically
   useEffect(() => {
@@ -324,7 +324,7 @@ function App() {
       setPast([]);
       setFuture([]);
       setActivePageIndex(0);
-      setIsDashboardVisible(true);
+      setIsDashboardVisible(false);
       setActiveMobileView('controls');
       setAppView('theme-selection');
     } catch (err: any) {
@@ -379,7 +379,7 @@ function App() {
     setPast([]);
     setFuture([]);
     setActivePageIndex(0);
-    setIsDashboardVisible(true);
+    setIsDashboardVisible(false);
     setActiveMobileView('controls');
     setAppView('theme-selection');
   };
@@ -641,7 +641,10 @@ function App() {
         bookTitle={bookTitle}
         selectedTheme={selectedTheme}
         onChangeTheme={setSelectedTheme}
-        onNext={() => setAppView('studio')}
+        onNext={() => {
+          setIsDashboardVisible(false);
+          setAppView('studio');
+        }}
         onBack={() => setAppView('landing')}
       />
     );

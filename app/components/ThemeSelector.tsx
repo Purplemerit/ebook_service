@@ -22,9 +22,9 @@ const renderThemePreview = (
           <div
             className={`theme-${theme.id}`}
             style={{
-              width: '595px',
-              height: '842px',
-              transform: 'scale(0.235)',
+              width: '794px',
+              height: '1123px',
+              transform: 'scale(0.18)',
               transformOrigin: 'top left',
               position: 'absolute',
               top: 0,
