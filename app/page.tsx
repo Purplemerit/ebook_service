@@ -763,6 +763,7 @@ function App() {
             onRedo={handleRedo}
             canUndo={past.length > 0}
             canRedo={future.length > 0}
+            onNavigateToThemes={() => setAppView('theme-selection')}
           />
 
           {/* Progress Overlay during AI styling */}

@@ -23,7 +23,8 @@ import {
   Redo2,
   Bot,
   Layers,
-  Highlighter
+  Highlighter,
+  Palette
 } from 'lucide-react';
 
 interface EbookViewerProps {
@@ -73,6 +74,7 @@ interface EbookViewerProps {
   // Page Dimensions
   dimensions: 'letter' | 'a4' | 'legal';
   setDimensions: (dims: 'letter' | 'a4' | 'legal') => void;
+  onNavigateToThemes: () => void;
 }
 
 export const EbookViewer: React.FC<EbookViewerProps> = ({
@@ -121,6 +123,7 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
   // Page Dimensions
   dimensions,
   setDimensions,
+  onNavigateToThemes,
 }) => {
   const [viewMode, setViewMode] = useState<'single' | 'spread' | 'grid'>('single');
   const [zoom, setZoom] = useState<number>(75);
@@ -367,6 +370,14 @@ export const EbookViewer: React.FC<EbookViewerProps> = ({
           >
             <ArrowLeft size={13} />
             <span>{isDashboardVisible ? 'Hide Dashboard' : 'Dashboard'}</span>
+          </button>
+
+          <button
+            onClick={onNavigateToThemes}
+            className="px-3 py-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Palette size={13} className="text-slate-500" />
+            <span>Back to Themes</span>
           </button>
 
           <div className="w-[1.5px] h-5 bg-slate-200" />
