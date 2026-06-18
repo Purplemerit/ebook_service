@@ -26,6 +26,34 @@ export function getNewsletterPdfFailedTopic(): string {
   return process.env.KAFKA_TOPIC_NEWSLETTER_PDF_FAILED || 'NEWS_LETTER_PDF_FAILED';
 }
 
+/** Internal topic — PDF worker notifies URL producer that a public URL is ready. */
+export function getNewsletterPdfReadyTopic(): string {
+  return process.env.KAFKA_TOPIC_NEWSLETTER_PDF_READY || 'NEWS_LETTER_PDF_READY';
+}
+
+/** Outbound topic — URL producer sends Cloudinary/public URL to downstream consumers. */
+export function getNewsletterPdfPublicUrlTopic(): string {
+  return process.env.KAFKA_TOPIC_NEWSLETTER_PDF_PUBLIC_URL || 'NEWS_LETTER_PDF_PUBLIC_URL';
+}
+
+/** blog_service → ebook: batch PDF request topic. */
+export function getBlogBatchRequestTopic(): string {
+  return process.env.KAFKA_BLOG_BATCH_REQUEST_TOPIC || 'newsletter-delivery';
+}
+
+/** ebook → blog_service: PDF ready with public URL. */
+export function getBlogPdfReadyTopic(): string {
+  return process.env.KAFKA_BLOG_PDF_READY_TOPIC || 'newsletter-pdf-ready';
+}
+
+export function getUrlProducerGroupId(): string {
+  return process.env.KAFKA_URL_PRODUCER_GROUP_ID || 'ebook-generator-url-producers';
+}
+
+export function getPublicUrlConsumerGroupId(): string {
+  return process.env.KAFKA_PUBLIC_URL_CONSUMER_GROUP_ID || 'ebook-generator-public-url-consumers';
+}
+
 /** @deprecated Use getNewsletterPdfTopic */
 export function getBlogPdfTopic(): string {
   return getNewsletterPdfTopic();

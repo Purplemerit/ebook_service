@@ -10,6 +10,8 @@
     "lint": "next lint",
     "worker": "tsx workers/pdf-export-worker.ts",
     "kafka:consumer": "tsx workers/kafka-blog-consumer.ts",
+    "kafka:url-producer": "tsx workers/kafka-url-producer.ts",
+    "kafka:public-url-consumer": "tsx workers/kafka-public-url-consumer.ts",
     "kafka:create-topics": "tsx scripts/kafka-create-topics.ts",
     "kafka:test-publish": "tsx scripts/publish-test-blog-event.ts",
     "docker:up": "docker compose up -d --build",

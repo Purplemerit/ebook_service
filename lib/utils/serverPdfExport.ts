@@ -123,7 +123,18 @@ export async function renderPdfFromPreviewUrl(
   const browser = await puppeteer.launch({
     headless: true,
     executablePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none'],
+    ignoreHTTPSErrors: true,
+    timeout: 120_000,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--font-render-hinting=none',
+      '--ignore-certificate-errors',
+      '--allow-insecure-localhost',
+      '--disable-features=HttpsUpgrades,HttpsFirst,HttpsFirstBalancedModeAutoEnable,AutomaticHttpsDefault,AutomaticHttpsUpgrade',
+    ],
   });
 
   try {

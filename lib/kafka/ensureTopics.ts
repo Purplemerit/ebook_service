@@ -2,6 +2,10 @@ import { Kafka } from 'kafkajs';
 import {
   getNewsletterPdfCompletedTopic,
   getNewsletterPdfFailedTopic,
+  getNewsletterPdfPublicUrlTopic,
+  getNewsletterPdfReadyTopic,
+  getBlogBatchRequestTopic,
+  getBlogPdfReadyTopic,
   getNewsletterPdfTopic,
   getKafkaBrokers,
   getKafkaClientId,
@@ -23,8 +27,15 @@ export async function ensureKafkaTopics(): Promise<void> {
   try {
     const required = [
       getNewsletterPdfTopic(),
+      getNewsletterPdfReadyTopic(),
+      getNewsletterPdfPublicUrlTopic(),
       getNewsletterPdfCompletedTopic(),
       getNewsletterPdfFailedTopic(),
+      getBlogBatchRequestTopic(),
+      getBlogPdfReadyTopic(),
+      // blog_service consumer topics
+      'smtp-events',
+      'low-performing-articles',
     ];
 
     const existing = await admin.listTopics();

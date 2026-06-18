@@ -20,9 +20,16 @@ export async function GET(
 
     const { jobId } = params;
 
-    const queue = getPdfExportQueue();
-    const job = await queue.getJob(jobId);
-    const data = job?.data ?? (await getRenderJob(jobId));
+    let data = await getRenderJob(jobId);
+    if (!data) {
+      try {
+        const queue = getPdfExportQueue();
+        const job = await queue.getJob(jobId);
+        data = job?.data ?? null;
+      } catch {
+        /* Redis optional — Kafka jobs use render-jobs filesystem store */
+      }
+    }
 
     if (!data) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });

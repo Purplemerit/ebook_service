@@ -3,13 +3,16 @@ import '../lib/utils/bootstrapEnv';
 import { Kafka, type Consumer } from 'kafkajs';
 import {
   getNewsletterPdfTopic,
+  getBlogBatchRequestTopic,
   getKafkaBrokers,
   getKafkaClientId,
   getKafkaConsumerGroupId,
 } from '../lib/kafka/config';
 import { ensureKafkaTopicsWithRetry } from '../lib/kafka/ensureTopics';
 import { handleBlogPdfEvent } from '../lib/kafka/handleBlogPdfEvent';
+import { handleBlogBatchEvent } from '../lib/kafka/handleBlogBatchEvent';
 import { disconnectKafkaProducer } from '../lib/kafka/producer';
+import { isBlogBatchRequestEvent } from '../lib/kafka/blogServiceTypes';
 import { isNewsletterPdfGenerateEvent } from '../lib/kafka/types';
 
 let consumer: Consumer | null = null;
@@ -23,13 +26,20 @@ async function startConsumer(): Promise<void> {
     brokers: getKafkaBrokers(),
   });
 
-  consumer = kafka.consumer({ groupId: getKafkaConsumerGroupId() });
+  consumer = kafka.consumer({
+    groupId: getKafkaConsumerGroupId(),
+    // PDF jobs can run several minutes; default 30s session causes coordinator errors.
+    sessionTimeout: 900_000,
+    rebalanceTimeout: 900_000,
+    heartbeatInterval: 15_000,
+  });
   await consumer.connect();
 
-  const topic = getNewsletterPdfTopic();
-  await consumer.subscribe({ topic, fromBeginning: false });
+  const testTopic = getNewsletterPdfTopic();
+  const blogTopic = getBlogBatchRequestTopic();
+  await consumer.subscribe({ topics: [testTopic, blogTopic], fromBeginning: false });
 
-  console.log(`[kafka-blog] Listening on topic "${topic}"`);
+  console.log(`[kafka-blog] Listening on topics "${testTopic}", "${blogTopic}"`);
   console.log(`[kafka-blog] Brokers: ${getKafkaBrokers().join(', ')}`);
   console.log(`[kafka-blog] Group: ${getKafkaConsumerGroupId()}`);
 
@@ -44,6 +54,19 @@ async function startConsumer(): Promise<void> {
         parsed = JSON.parse(raw);
       } catch {
         console.error(`[kafka-blog] Invalid JSON on ${msgTopic}[${partition}]:`, raw.slice(0, 200));
+        return;
+      }
+
+      if (msgTopic === blogTopic && isBlogBatchRequestEvent(parsed)) {
+        console.log(`[kafka-blog] Received blog_service batch ${parsed.eventId}`);
+        try {
+          await handleBlogBatchEvent(parsed);
+        } catch (err) {
+          console.error(
+            `[kafka-blog] Failed batch ${parsed.eventId}:`,
+            err instanceof Error ? err.message : err
+          );
+        }
         return;
       }
 

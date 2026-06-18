@@ -3,6 +3,8 @@ import type { ThemeId } from '@/lib/themes/types';
 export const NEWSLETTER_PDF_EVENT = 'NEWS_LETTER_PDF' as const;
 export const NEWSLETTER_PDF_COMPLETED_EVENT = 'NEWS_LETTER_PDF_COMPLETED' as const;
 export const NEWSLETTER_PDF_FAILED_EVENT = 'NEWS_LETTER_PDF_FAILED' as const;
+export const NEWSLETTER_PDF_READY_EVENT = 'NEWS_LETTER_PDF_READY' as const;
+export const NEWSLETTER_PDF_PUBLIC_URL_EVENT = 'NEWS_LETTER_PDF_PUBLIC_URL' as const;
 
 /** Event published by blog_service / newsletter service to request a PDF. */
 export interface NewsletterPdfGenerateEvent {
@@ -48,6 +50,48 @@ export interface NewsletterPdfFailedEvent {
 
 /** @deprecated Alias */
 export type BlogPdfFailedEvent = NewsletterPdfFailedEvent;
+
+/** Internal — PDF worker → URL producer (includes Cloudinary public URL). */
+export interface NewsletterPdfReadyEvent {
+  eventType: typeof NEWSLETTER_PDF_READY_EVENT;
+  eventId: string;
+  blogId: string;
+  filename: string;
+  pageCount: number;
+  downloadUrl: string;
+  readyAt: string;
+}
+
+/** Outbound — URL producer → external/downstream consumer. */
+export interface NewsletterPdfPublicUrlEvent {
+  eventType: typeof NEWSLETTER_PDF_PUBLIC_URL_EVENT;
+  eventId: string;
+  blogId: string;
+  downloadUrl: string;
+  publishedAt: string;
+}
+
+export function isNewsletterPdfReadyEvent(value: unknown): value is NewsletterPdfReadyEvent {
+  if (!value || typeof value !== 'object') return false;
+  const e = value as Record<string, unknown>;
+  return (
+    e.eventType === NEWSLETTER_PDF_READY_EVENT &&
+    typeof e.eventId === 'string' &&
+    typeof e.blogId === 'string' &&
+    typeof e.downloadUrl === 'string'
+  );
+}
+
+export function isNewsletterPdfPublicUrlEvent(value: unknown): value is NewsletterPdfPublicUrlEvent {
+  if (!value || typeof value !== 'object') return false;
+  const e = value as Record<string, unknown>;
+  return (
+    e.eventType === NEWSLETTER_PDF_PUBLIC_URL_EVENT &&
+    typeof e.eventId === 'string' &&
+    typeof e.blogId === 'string' &&
+    typeof e.downloadUrl === 'string'
+  );
+}
 
 export function isNewsletterPdfGenerateEvent(value: unknown): value is NewsletterPdfGenerateEvent {
   if (!value || typeof value !== 'object') return false;

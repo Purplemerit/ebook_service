@@ -21,7 +21,7 @@ function ensureCloudinaryConfigured(): void {
   }
 }
 
-/** Upload a generated PDF and return its public HTTPS URL. */
+/** Upload a generated PDF and return a signed public HTTPS URL. */
 export async function uploadPdfToCloudinary(
   filePath: string,
   publicId: string
@@ -34,19 +34,30 @@ export async function uploadPdfToCloudinary(
   const folder = process.env.CLOUDINARY_PDF_FOLDER?.trim() || 'newsletter-pdfs';
   const safeId = publicId.replace(/[^\w\-]+/g, '_');
 
+  // PDFs deliver more reliably as "image" assets than "raw" on most Cloudinary accounts.
   const result = await cloudinary.uploader.upload(filePath, {
-    resource_type: 'raw',
+    resource_type: 'image',
     folder,
     public_id: safeId,
     overwrite: true,
     access_mode: 'public',
   });
 
-  if (!result.secure_url) {
-    throw new Error('Cloudinary upload succeeded but no secure_url was returned');
+  if (!result.public_id) {
+    throw new Error('Cloudinary upload succeeded but no public_id was returned');
   }
 
   await unlink(filePath).catch(() => {});
 
-  return result.secure_url;
+  const signedUrl = cloudinary.url(result.public_id, {
+    resource_type: 'image',
+    type: 'upload',
+    format: 'pdf',
+    sign_url: true,
+    secure: true,
+  });
+
+  console.log(`[cloudinary] Saved ${result.public_id} → ${signedUrl}`);
+
+  return signedUrl;
 }

@@ -3,11 +3,11 @@ import { generateServerPdf } from '@/lib/utils/serverPdfExport';
 import { getPublicAppBaseUrl } from '@/lib/utils/exportRenderAuth';
 import { isCloudinaryConfigured, uploadPdfToCloudinary } from '@/lib/utils/cloudinaryUpload';
 import { blogEventToFormattedPages } from './blogEventToSections';
-import { publishBlogPdfCompleted, publishBlogPdfFailed } from './producer';
+import { publishBlogPdfFailed, publishPdfReady } from './producer';
 import { deleteRenderJob, saveRenderJob } from './renderJobStore';
 import {
-  NEWSLETTER_PDF_COMPLETED_EVENT,
   NEWSLETTER_PDF_FAILED_EVENT,
+  NEWSLETTER_PDF_READY_EVENT,
   type NewsletterPdfGenerateEvent,
 } from './types';
 import { resolveBlogTheme } from './types';
@@ -51,17 +51,17 @@ export async function handleBlogPdfEvent(event: NewsletterPdfGenerateEvent): Pro
       console.log(`[kafka-blog] Uploaded ${jobId} to Cloudinary`);
     }
 
-    await publishBlogPdfCompleted({
-      eventType: NEWSLETTER_PDF_COMPLETED_EVENT,
+    await publishPdfReady({
+      eventType: NEWSLETTER_PDF_READY_EVENT,
       eventId: jobId,
       blogId: event.blogId,
       filename: result.filename,
       pageCount: result.pageCount,
       downloadUrl,
-      completedAt: new Date().toISOString(),
+      readyAt: new Date().toISOString(),
     });
 
-    console.log(`[kafka-blog] Completed ${jobId} → ${downloadUrl}`);
+    console.log(`[kafka-blog] PDF ready ${jobId} → URL producer will publish ${downloadUrl}`);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
 

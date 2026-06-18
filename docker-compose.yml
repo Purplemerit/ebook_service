@@ -3,6 +3,7 @@ services:
     image: apache/kafka:latest
     hostname: kafka
     container_name: kafka
+    restart: unless-stopped
     ports:
       - "9092:9092"
     environment:
@@ -29,7 +30,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ebook-generator-app:latest
     container_name: ebook-service
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
@@ -48,15 +51,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
+    image: ebook-generator-worker:latest
     container_name: ebook-kafka-consumer
+    restart: unless-stopped
+    shm_size: '1gb'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       KAFKA_BROKERS: kafka:29092
       KAFKA_CLIENT_ID: ebook-generator
-      KAFKA_GROUP_ID: ebook-generator-newsletter-consumers
+      KAFKA_GROUP_ID: ebook-generator-newsletter-consumers-v2
       KAFKA_TOPIC_NEWSLETTER_PDF: NEWS_LETTER_PDF
-      KAFKA_TOPIC_NEWSLETTER_PDF_COMPLETED: NEWS_LETTER_PDF_COMPLETED
+      KAFKA_TOPIC_NEWSLETTER_PDF_READY: NEWS_LETTER_PDF_READY
       KAFKA_TOPIC_NEWSLETTER_PDF_FAILED: NEWS_LETTER_PDF_FAILED
-      APP_URL: http://app:3000
+      KAFKA_BLOG_BATCH_REQUEST_TOPIC: newsletter-delivery
+      KAFKA_BLOG_PDF_READY_TOPIC: newsletter-pdf-ready
+      APP_URL: http://host.docker.internal:3000
       PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
       EXPORT_RENDER_SECRET: ${EXPORT_RENDER_SECRET:-dev-export-render-secret}
       VITE_GROQ_API_KEY: ${VITE_GROQ_API_KEY:-}
@@ -72,6 +82,45 @@ services:
       kafka:
         condition: service_healthy
       app:
+        condition: service_started
+
+  kafka-url-producer:
+    build:
+      context: .
+      dockerfile: Dockerfile.kafka
+    image: ebook-generator-kafka:latest
+    container_name: ebook-kafka-url-producer
+    restart: unless-stopped
+    command: ["npm", "run", "kafka:url-producer"]
+    environment:
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: ebook-generator
+      KAFKA_URL_PRODUCER_GROUP_ID: ebook-generator-url-producers
+      KAFKA_TOPIC_NEWSLETTER_PDF_READY: NEWS_LETTER_PDF_READY
+      KAFKA_TOPIC_NEWSLETTER_PDF_PUBLIC_URL: NEWS_LETTER_PDF_PUBLIC_URL
+      KAFKA_TOPIC_NEWSLETTER_PDF_COMPLETED: NEWS_LETTER_PDF_COMPLETED
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka:
+        condition: service_healthy
+      kafka-consumer:
+        condition: service_started
+
+  kafka-public-url-consumer:
+    image: ebook-generator-kafka:latest
+    container_name: ebook-kafka-public-url-consumer
+    restart: unless-stopped
+    command: ["npm", "run", "kafka:public-url-consumer"]
+    environment:
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: ebook-generator
+      KAFKA_PUBLIC_URL_CONSUMER_GROUP_ID: ebook-generator-public-url-consumers
+      KAFKA_TOPIC_NEWSLETTER_PDF_PUBLIC_URL: NEWS_LETTER_PDF_PUBLIC_URL
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka:
+        condition: service_healthy
+      kafka-url-producer:
         condition: service_started
 
 volumes:
